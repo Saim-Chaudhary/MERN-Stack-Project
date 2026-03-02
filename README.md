@@ -1,13 +1,28 @@
-
 ```
 KAT_Project
 ├─ backend
+│  ├─ config
+│  │  └─ db.js
 │  ├─ models
-│  └─ routes
+│  │  ├─ Airline.js
+│  │  ├─ Booking.js
+│  │  ├─ Contact.js
+│  │  ├─ CustomRequest.js
+│  │  ├─ Document.js
+│  │  ├─ Expense.js
+│  │  ├─ ExpenseCategory.js
+│  │  ├─ Guide.js
+│  │  ├─ Hotel.js
+│  │  ├─ Package.js
+│  │  ├─ Payment.js
+│  │  ├─ SeasonalPrice.js
+│  │  ├─ Testimonial.js
+│  │  └─ User.js
+│  ├─ routes
+│  └─ server.js
 ├─ frontend
 │  ├─ eslint.config.js
 │  ├─ index.html
-│  ├─ package-lock.json
 │  ├─ package.json
 │  ├─ public
 │  │  └─ vite.svg
@@ -20,7 +35,7 @@ KAT_Project
 │  │  ├─ index.css
 │  │  └─ main.jsx
 │  └─ vite.config.js
-├─ package-lock.json
-└─ package.json
+├─ package.json
+└─ README.md
 
 ```
