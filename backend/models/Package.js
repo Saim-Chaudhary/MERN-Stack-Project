@@ -18,7 +18,10 @@ const packageSchema = new mongoose.Schema({
 
   transportType: { type: String, enum: ["Sharing", "Private", "VIP"] },
 
-  includedServices: [String],
+  includedServices: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Service"
+  }],
 
   departureDate: Date,
   returnDate: Date,

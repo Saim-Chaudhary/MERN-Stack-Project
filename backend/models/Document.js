@@ -4,8 +4,9 @@ const documentSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 
   documentType: {
-    type: String,
-    enum: ["Passport", "Visa", "Ticket", "Vaccination", "Other"]
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "DocumentType",
+    required: true
   },
 
   fileUrl: String,
