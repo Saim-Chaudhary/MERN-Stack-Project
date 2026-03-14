@@ -56,10 +56,16 @@ app.use("/api/expenses", expenseRoutes);
 app.use("/api/expense-categories", expenseCategoryRoutes);
 app.use("/api/seasonal-prices", seasonalPriceRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
 // Global error handler - must be at the very bottom after all routes
 app.use(errorMiddleware);
+
+// Export app for Vercel serverless usage
+module.exports = app;
+
+// Keep local development behavior unchanged
+if (require.main === module) {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
