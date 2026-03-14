@@ -1,4 +1,3 @@
-
 ```
 KAT_Project
 ├─ backend
@@ -84,8 +83,26 @@ KAT_Project
 │  │  │  ├─ react.svg
 │  │  │  ├─ signup-1.jpg
 │  │  │  ├─ signup-1.png
-│  │  │  └─ signup-1c.png
+│  │  │  ├─ signup-1c.png
+│  │  │  └─ unnamed.png
 │  │  ├─ components
+│  │  │  ├─ common
+│  │  │  │  ├─ Footer.jsx
+│  │  │  │  └─ Navbar.jsx
+│  │  │  ├─ home
+│  │  │  │  ├─ AboutSection.jsx
+│  │  │  │  ├─ CTASection.jsx
+│  │  │  │  ├─ HeroSection.jsx
+│  │  │  │  ├─ PackageCard.jsx
+│  │  │  │  ├─ PackagesSection.jsx
+│  │  │  │  ├─ TestimonialsSection.jsx
+│  │  │  │  └─ WhyChooseSection.jsx
+│  │  │  └─ ui
+│  │  ├─ constants
+│  │  ├─ data
+│  │  │  ├─ homePackages.js
+│  │  │  └─ homeTestimonials.js
+│  │  ├─ hooks
 │  │  ├─ index.css
 │  │  ├─ layouts
 │  │  │  ├─ AdminLayout.jsx
@@ -96,7 +113,7 @@ KAT_Project
 │  │  │  ├─ admin
 │  │  │  │  ├─ AdminDashboard.jsx
 │  │  │  │  ├─ BookingManagement.jsx
-│  │  │  │  ├─ Customers.jsx
+│  │  │  │  ├─ CustomersManagement.jsx
 │  │  │  │  ├─ PackagesManagement.jsx
 │  │  │  │  └─ Profile.jsx
 │  │  │  ├─ customer
@@ -111,28 +128,14 @@ KAT_Project
 │  │  │     ├─ Login.jsx
 │  │  │     ├─ PackageDetail.jsx
 │  │  │     ├─ Packages.jsx
-│  │  │     └─ Register.jsx
+│  │  │     ├─ Register.jsx
+│  │  │     └─ Services.jsx
 │  │  ├─ services
+│  │  ├─ store
 │  │  ├─ theme
 │  │  └─ utils
 │  └─ vite.config.js
 ├─ frontend-build-guide.md
-├─ homepage_custom
-│  ├─ components
-│  │  ├─ AboutSection.jsx
-│  │  ├─ CTASection.jsx
-│  │  ├─ Footer.jsx
-│  │  ├─ HeroSection.jsx
-│  │  ├─ Navbar.jsx
-│  │  ├─ PackageCard.jsx
-│  │  ├─ PackagesSection.jsx
-│  │  ├─ TestimonialsSection.jsx
-│  │  └─ WhyChooseSection.jsx
-│  ├─ data
-│  │  ├─ packages.js
-│  │  └─ testimonials.js
-│  └─ pages
-│     └─ HomePage.jsx
 ├─ package.json
 └─ README.md
 
