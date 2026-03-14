@@ -21,7 +21,7 @@ const registerUser = async (req, res) => {
 
         if (userExist) {
             return res.status(400).json({
-                message: "User already exists"
+                message: "User already exists"  
             });
         }
 
@@ -106,7 +106,34 @@ const loginUser = async (req, res) => {
 
 }
 
+// Get logged-in user's profile
+const getProfile = async (req, res) => {
+    try {
+        // req.user.id comes from the JWT token (set by authMiddleware)
+        const user = await userModel.findById(req.user.id).select('-password');
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Profile fetched successfully",
+            data: user
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error",
+            error
+        });
+    }
+};
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getProfile
 }
