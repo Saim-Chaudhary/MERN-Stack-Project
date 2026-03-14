@@ -1,9 +1,31 @@
+
 ```
 KAT_Project
 ├─ backend
 │  ├─ config
 │  │  └─ db.js
 │  ├─ controllers
+│  │  ├─ airlineController.js
+│  │  ├─ authController.js
+│  │  ├─ bookingController.js
+│  │  ├─ contactController.js
+│  │  ├─ customRequestController.js
+│  │  ├─ documentController.js
+│  │  ├─ documentTypeController.js
+│  │  ├─ expenseCategoryController.js
+│  │  ├─ expenseController.js
+│  │  ├─ guideController.js
+│  │  ├─ hotelController.js
+│  │  ├─ packageController.js
+│  │  ├─ passengerController.js
+│  │  ├─ paymentController.js
+│  │  ├─ seasonalPriceController.js
+│  │  ├─ serviceController.js
+│  │  └─ testimonialController.js
+│  ├─ middleware
+│  │  ├─ adminMiddleware.js
+│  │  ├─ authMiddleware.js
+│  │  └─ errorMiddleware.js
 │  ├─ models
 │  │  ├─ Airline.js
 │  │  ├─ Booking.js
@@ -15,6 +37,7 @@ KAT_Project
 │  │  ├─ ExpenseCategory.js
 │  │  ├─ Guide.js
 │  │  ├─ Hotel.js
+│  │  ├─ mergedSchema
 │  │  ├─ Package.js
 │  │  ├─ Passenger.js
 │  │  ├─ Payment.js
@@ -22,7 +45,25 @@ KAT_Project
 │  │  ├─ Service.js
 │  │  ├─ Testimonial.js
 │  │  └─ User.js
+│  ├─ package.json
 │  ├─ routes
+│  │  ├─ airlineRoutes.js
+│  │  ├─ authRoutes.js
+│  │  ├─ bookingRoutes.js
+│  │  ├─ contactRoutes.js
+│  │  ├─ customRequestRoutes.js
+│  │  ├─ documentRoutes.js
+│  │  ├─ documentTypeRoutes.js
+│  │  ├─ expenseCategoryRoutes.js
+│  │  ├─ expenseRoutes.js
+│  │  ├─ guideRoutes.js
+│  │  ├─ hotelRoutes.js
+│  │  ├─ packageRoutes.js
+│  │  ├─ passengerRoutes.js
+│  │  ├─ paymentRoutes.js
+│  │  ├─ seasonalPriceRoutes.js
+│  │  ├─ serviceRoutes.js
+│  │  └─ testimonialRoutes.js
 │  └─ server.js
 ├─ frontend
 │  ├─ eslint.config.js
@@ -35,10 +76,63 @@ KAT_Project
 │  │  ├─ App.css
 │  │  ├─ App.jsx
 │  │  ├─ assets
-│  │  │  └─ react.svg
+│  │  │  ├─ 1.png
+│  │  │  ├─ hero.jpg
+│  │  │  ├─ p1.jpg
+│  │  │  ├─ p2.jpg
+│  │  │  ├─ p3.jpg
+│  │  │  ├─ react.svg
+│  │  │  ├─ signup-1.jpg
+│  │  │  ├─ signup-1.png
+│  │  │  └─ signup-1c.png
+│  │  ├─ components
 │  │  ├─ index.css
-│  │  └─ main.jsx
+│  │  ├─ layouts
+│  │  │  ├─ AdminLayout.jsx
+│  │  │  ├─ CustomerLayout.jsx
+│  │  │  └─ PublicLayout.jsx
+│  │  ├─ main.jsx
+│  │  ├─ pages
+│  │  │  ├─ admin
+│  │  │  │  ├─ AdminDashboard.jsx
+│  │  │  │  ├─ BookingManagement.jsx
+│  │  │  │  ├─ Customers.jsx
+│  │  │  │  ├─ PackagesManagement.jsx
+│  │  │  │  └─ Profile.jsx
+│  │  │  ├─ customer
+│  │  │  │  ├─ BookingDetail.jsx
+│  │  │  │  ├─ CustomerDashboard.jsx
+│  │  │  │  ├─ MyBookings.jsx
+│  │  │  │  └─ Profile.jsx
+│  │  │  └─ public
+│  │  │     ├─ About.jsx
+│  │  │     ├─ Contact.jsx
+│  │  │     ├─ Home.jsx
+│  │  │     ├─ Login.jsx
+│  │  │     ├─ PackageDetail.jsx
+│  │  │     ├─ Packages.jsx
+│  │  │     └─ Register.jsx
+│  │  ├─ services
+│  │  ├─ theme
+│  │  └─ utils
 │  └─ vite.config.js
+├─ frontend-build-guide.md
+├─ homepage_custom
+│  ├─ components
+│  │  ├─ AboutSection.jsx
+│  │  ├─ CTASection.jsx
+│  │  ├─ Footer.jsx
+│  │  ├─ HeroSection.jsx
+│  │  ├─ Navbar.jsx
+│  │  ├─ PackageCard.jsx
+│  │  ├─ PackagesSection.jsx
+│  │  ├─ TestimonialsSection.jsx
+│  │  └─ WhyChooseSection.jsx
+│  ├─ data
+│  │  ├─ packages.js
+│  │  └─ testimonials.js
+│  └─ pages
+│     └─ HomePage.jsx
 ├─ package.json
 └─ README.md
 
