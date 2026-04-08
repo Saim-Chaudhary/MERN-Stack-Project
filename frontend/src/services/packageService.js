@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3000/api/packages'
+const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || ''
+const API_URL = `${API_BASE_URL}/api/packages`
 
 const getAllPackages = async () => {
     const response = await axios.get(`${API_URL}/all`)
