@@ -21,7 +21,7 @@ function ServicesManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/services')
+      const response = await axios.get('/api/services')
       setServices(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -48,7 +48,7 @@ function ServicesManagement() {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/services/create', formData, getAuthHeaders())
+      await axios.post('/api/services/create', formData, getAuthHeaders())
       resetForm()
       fetchServices()
     } catch (err) {
@@ -59,7 +59,7 @@ function ServicesManagement() {
 
   const deleteService = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/services/${id}`, getAuthHeaders())
+      await axios.delete(`/api/services/${id}`, getAuthHeaders())
       fetchServices()
     } catch (err) {
       console.error(err)

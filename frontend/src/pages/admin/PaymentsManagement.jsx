@@ -16,7 +16,7 @@ function PaymentsManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/payments', getAuthHeaders())
+      const response = await axios.get('/api/payments', getAuthHeaders())
       setPayments(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -33,7 +33,7 @@ function PaymentsManagement() {
   const updatePaymentStatus = async (id, paymentStatus) => {
     try {
       const payload = getStatusPayload(paymentStatus)
-      await axios.put(`http://localhost:3000/api/payments/${id}`, payload, getAuthHeaders())
+      await axios.put(`/api/payments/${id}`, payload, getAuthHeaders())
       fetchPayments()
     } catch (err) {
       console.error(err)

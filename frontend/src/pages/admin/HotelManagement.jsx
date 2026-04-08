@@ -31,7 +31,7 @@ function HotelManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/hotels')
+      const response = await axios.get('/api/hotels')
       setHotels(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -59,7 +59,7 @@ function HotelManagement() {
 
     try {
       const payload = getCreatePayload()
-      await axios.post('http://localhost:3000/api/hotels/create', payload, getAuthHeaders())
+      await axios.post('/api/hotels/create', payload, getAuthHeaders())
       resetForm()
       fetchHotels()
     } catch (err) {
@@ -83,7 +83,7 @@ function HotelManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/hotels/${item._id}`,
+        `/api/hotels/${item._id}`,
         {
           name,
           city,
@@ -101,7 +101,7 @@ function HotelManagement() {
 
   const deleteHotel = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/hotels/${id}`, getAuthHeaders())
+      await axios.delete(`/api/hotels/${id}`, getAuthHeaders())
       fetchHotels()
     } catch (err) {
       console.error(err)

@@ -33,8 +33,8 @@ function SeasonalPricesManagement() {
       setError('')
 
       const [pricesRes, packagesRes] = await Promise.all([
-        axios.get('http://localhost:3000/api/seasonal-prices'),
-        axios.get('http://localhost:3000/api/packages/all'),
+        axios.get('/api/seasonal-prices'),
+        axios.get('/api/packages/all'),
       ])
 
       setPrices(pricesRes.data?.data || [])
@@ -65,7 +65,7 @@ function SeasonalPricesManagement() {
 
     try {
       const payload = getCreatePayload()
-      await axios.post('http://localhost:3000/api/seasonal-prices/create', payload, getAuthHeaders())
+      await axios.post('/api/seasonal-prices/create', payload, getAuthHeaders())
       resetForm()
       fetchData()
     } catch (err) {
@@ -76,7 +76,7 @@ function SeasonalPricesManagement() {
 
   const deletePrice = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/seasonal-prices/${id}`, getAuthHeaders())
+      await axios.delete(`/api/seasonal-prices/${id}`, getAuthHeaders())
       fetchData()
     } catch (err) {
       console.error(err)
@@ -98,7 +98,7 @@ function SeasonalPricesManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/seasonal-prices/${item._id}`,
+        `/api/seasonal-prices/${item._id}`,
         {
           seasonName,
           price: Number(priceInput),

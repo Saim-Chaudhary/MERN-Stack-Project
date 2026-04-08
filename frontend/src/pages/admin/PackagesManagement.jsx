@@ -45,10 +45,10 @@ function PackagesManagement() {
       setError('')
 
       const [packagesRes, airlinesRes, hotelsRes, servicesRes] = await Promise.all([
-        axios.get('http://localhost:3000/api/packages/admin/all', getAuthHeaders()),
-        axios.get('http://localhost:3000/api/airlines'),
-        axios.get('http://localhost:3000/api/hotels'),
-        axios.get('http://localhost:3000/api/services'),
+        axios.get('/api/packages/admin/all', getAuthHeaders()),
+        axios.get('/api/airlines'),
+        axios.get('/api/hotels'),
+        axios.get('/api/services'),
       ])
 
       setPackages(packagesRes.data?.data || [])
@@ -91,7 +91,7 @@ function PackagesManagement() {
 
     try {
       const payload = getCreatePayload()
-      await axios.post('http://localhost:3000/api/packages/create', payload, getAuthHeaders())
+      await axios.post('/api/packages/create', payload, getAuthHeaders())
 
       resetForm()
       fetchData()
@@ -119,7 +119,7 @@ function PackagesManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/packages/${item._id}`,
+        `/api/packages/${item._id}`,
         {
           title,
           basePrice: Number(basePriceInput),
@@ -138,7 +138,7 @@ function PackagesManagement() {
 
   const deletePackage = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/packages/${id}`, getAuthHeaders())
+      await axios.delete(`/api/packages/${id}`, getAuthHeaders())
       fetchData()
     } catch (err) {
       console.error(err)

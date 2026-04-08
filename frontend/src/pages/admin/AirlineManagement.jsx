@@ -21,7 +21,7 @@ function AirlineManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/airlines')
+      const response = await axios.get('/api/airlines')
       setAirlines(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -48,7 +48,7 @@ function AirlineManagement() {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/airlines/create', formData, getAuthHeaders())
+      await axios.post('/api/airlines/create', formData, getAuthHeaders())
       resetForm()
       fetchAirlines()
     } catch (err) {
@@ -69,7 +69,7 @@ function AirlineManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/airlines/${item._id}`,
+        `/api/airlines/${item._id}`,
         { name, contactNumber, contractDetails },
         getAuthHeaders()
       )
@@ -82,7 +82,7 @@ function AirlineManagement() {
 
   const deleteAirline = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/airlines/${id}`, getAuthHeaders())
+      await axios.delete(`/api/airlines/${id}`, getAuthHeaders())
       fetchAirlines()
     } catch (err) {
       console.error(err)

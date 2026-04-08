@@ -28,8 +28,8 @@ function BookingManagement() {
       setError('')
 
       const [bookingsRes, guidesRes] = await Promise.all([
-        axios.get('http://localhost:3000/api/bookings', getAuthHeaders()),
-        axios.get('http://localhost:3000/api/guides', getAuthHeaders()),
+        axios.get('/api/bookings', getAuthHeaders()),
+        axios.get('/api/guides', getAuthHeaders()),
       ])
 
       const bookingsData = bookingsRes.data?.data || []
@@ -58,7 +58,7 @@ function BookingManagement() {
     }
 
     try {
-      await axios.put(`http://localhost:3000/api/bookings/${booking._id}`, payload, getAuthHeaders())
+      await axios.put(`/api/bookings/${booking._id}`, payload, getAuthHeaders())
       fetchData()
     } catch (err) {
       console.error(err)
@@ -68,7 +68,7 @@ function BookingManagement() {
 
   const deleteBooking = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/bookings/${id}`, getAuthHeaders())
+      await axios.delete(`/api/bookings/${id}`, getAuthHeaders())
       fetchData()
     } catch (err) {
       console.error(err)

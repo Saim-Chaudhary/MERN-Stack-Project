@@ -14,7 +14,7 @@ function PassengersManagement() {
   })
 
   const getBookingPassengersUrl = (id) => {
-    return `http://localhost:3000/api/passengers/booking/${id}`
+    return `/api/passengers/booking/${id}`
   }
 
   const getPassengerUpdatePayload = ({ item, fullName, ageInput, passengerType, passportNumber, nationality }) => ({
@@ -29,7 +29,7 @@ function PassengersManagement() {
   const fetchBookings = async () => {
     try {
       setBookingsLoading(true)
-      const response = await axios.get('http://localhost:3000/api/bookings', getAuthHeaders())
+      const response = await axios.get('/api/bookings', getAuthHeaders())
       setBookings(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -66,7 +66,7 @@ function PassengersManagement() {
 
   const deletePassenger = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/passengers/${id}`, getAuthHeaders())
+      await axios.delete(`/api/passengers/${id}`, getAuthHeaders())
       setPassengers((prev) => prev.filter((item) => item._id !== id))
     } catch (err) {
       console.error(err)
@@ -93,7 +93,7 @@ function PassengersManagement() {
     try {
       const payload = getPassengerUpdatePayload({ item, fullName, ageInput, passengerType, passportNumber, nationality })
       await axios.put(
-        `http://localhost:3000/api/passengers/${item._id}`,
+        `/api/passengers/${item._id}`,
         payload,
         getAuthHeaders()
       )

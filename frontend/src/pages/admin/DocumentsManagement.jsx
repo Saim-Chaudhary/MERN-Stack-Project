@@ -16,7 +16,7 @@ function DocumentsManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/documents', getAuthHeaders())
+      const response = await axios.get('/api/documents', getAuthHeaders())
       setDocuments(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -33,7 +33,7 @@ function DocumentsManagement() {
   const updateStatus = async (id, status) => {
     try {
       const payload = getStatusPayload(status)
-      await axios.put(`http://localhost:3000/api/documents/${id}`, payload, getAuthHeaders())
+      await axios.put(`/api/documents/${id}`, payload, getAuthHeaders())
       fetchDocuments()
     } catch (err) {
       console.error(err)
@@ -43,7 +43,7 @@ function DocumentsManagement() {
 
   const deleteDocument = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/documents/${id}`, getAuthHeaders())
+      await axios.delete(`/api/documents/${id}`, getAuthHeaders())
       fetchDocuments()
     } catch (err) {
       console.error(err)

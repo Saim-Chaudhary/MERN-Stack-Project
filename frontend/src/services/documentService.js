@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3000/api/documents'
-const DOCUMENT_TYPE_URL = 'http://localhost:3000/api/document-types'
+const API_URL = '/api/documents'
+const DOCUMENT_TYPE_URL = '/api/document-types'
 
 const getAuthHeaders = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }

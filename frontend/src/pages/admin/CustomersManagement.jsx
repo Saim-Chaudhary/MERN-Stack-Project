@@ -31,8 +31,8 @@ function CustomersManagement() {
       setError('')
       setSuccess('')
       const [usersResponse, guidesResponse] = await Promise.all([
-        axios.get('http://localhost:3000/api/auth/users', getAuthHeaders()),
-        axios.get('http://localhost:3000/api/guides', getAuthHeaders()),
+        axios.get('/api/auth/users', getAuthHeaders()),
+        axios.get('/api/guides', getAuthHeaders()),
       ])
 
       const usersData = usersResponse.data?.data || []
@@ -55,7 +55,7 @@ function CustomersManagement() {
 
   const updateRole = async (id, role) => {
     try {
-      await axios.put(`http://localhost:3000/api/auth/users/${id}/role`, { role }, getAuthHeaders())
+      await axios.put(`/api/auth/users/${id}/role`, { role }, getAuthHeaders())
       setSuccess('User role updated successfully')
       fetchUsers()
     } catch (err) {
@@ -80,7 +80,7 @@ function CustomersManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/auth/users/${item._id}`,
+        `/api/auth/users/${item._id}`,
         { fullName: fullName.trim(), phone, address },
         getAuthHeaders()
       )
@@ -97,7 +97,7 @@ function CustomersManagement() {
     if (!confirmed) return
 
     try {
-      await axios.delete(`http://localhost:3000/api/auth/users/${id}`, getAuthHeaders())
+      await axios.delete(`/api/auth/users/${id}`, getAuthHeaders())
       setSuccess('User deleted successfully')
       fetchUsers()
     } catch (err) {
@@ -116,7 +116,7 @@ function CustomersManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/bookings/assign-guide/customer/${userId}`,
+        `/api/bookings/assign-guide/customer/${userId}`,
         { guideId },
         getAuthHeaders()
       )

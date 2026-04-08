@@ -19,7 +19,7 @@ function TestimonialsManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/testimonials', getAuthHeaders())
+      const response = await axios.get('/api/testimonials', getAuthHeaders())
       setTestimonials(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -37,7 +37,7 @@ function TestimonialsManagement() {
     try {
       const payload = getUpdatePayload(item, updates)
       await axios.put(
-        `http://localhost:3000/api/testimonials/${item._id}`,
+        `/api/testimonials/${item._id}`,
         payload,
         getAuthHeaders()
       )
@@ -50,7 +50,7 @@ function TestimonialsManagement() {
 
   const deleteTestimonial = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/testimonials/${id}`, getAuthHeaders())
+      await axios.delete(`/api/testimonials/${id}`, getAuthHeaders())
       fetchTestimonials()
     } catch (err) {
       console.error(err)

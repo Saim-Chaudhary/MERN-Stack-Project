@@ -16,7 +16,7 @@ function ContactsManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/contacts', getAuthHeaders())
+      const response = await axios.get('/api/contacts', getAuthHeaders())
       setContacts(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -33,7 +33,7 @@ function ContactsManagement() {
   const updateStatus = async (id, status) => {
     try {
       const payload = getStatusPayload(status)
-      await axios.put(`http://localhost:3000/api/contacts/${id}`, payload, getAuthHeaders())
+      await axios.put(`/api/contacts/${id}`, payload, getAuthHeaders())
       fetchContacts()
     } catch (err) {
       console.error(err)
@@ -43,7 +43,7 @@ function ContactsManagement() {
 
   const deleteContact = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/contacts/${id}`, getAuthHeaders())
+      await axios.delete(`/api/contacts/${id}`, getAuthHeaders())
       fetchContacts()
     } catch (err) {
       console.error(err)

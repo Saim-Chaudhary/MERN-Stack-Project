@@ -31,7 +31,7 @@ function DocumentTypesManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/document-types')
+      const response = await axios.get('/api/document-types')
       setTypes(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -60,7 +60,7 @@ function DocumentTypesManagement() {
 
     try {
       const payload = getCreatePayload()
-      await axios.post('http://localhost:3000/api/document-types/create', payload, getAuthHeaders())
+      await axios.post('/api/document-types/create', payload, getAuthHeaders())
       resetForm()
       fetchTypes()
     } catch (err) {
@@ -71,7 +71,7 @@ function DocumentTypesManagement() {
 
   const deleteType = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/document-types/${id}`, getAuthHeaders())
+      await axios.delete(`/api/document-types/${id}`, getAuthHeaders())
       fetchTypes()
     } catch (err) {
       console.error(err)
@@ -94,7 +94,7 @@ function DocumentTypesManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/document-types/${item._id}`,
+        `/api/document-types/${item._id}`,
         {
           name,
           description,

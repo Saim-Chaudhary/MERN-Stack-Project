@@ -55,10 +55,10 @@ function AdminDashboard() {
         const authHeaders = getAuthHeaders()
 
         const [bookingsRes, packagesRes, contactsRes, customRequestsRes] = await Promise.all([
-          axios.get('http://localhost:3000/api/bookings', authHeaders),
-          axios.get('http://localhost:3000/api/packages/all'),
-          axios.get('http://localhost:3000/api/contacts', authHeaders),
-          axios.get('http://localhost:3000/api/custom-requests', authHeaders),
+          axios.get('/api/bookings', authHeaders),
+          axios.get('/api/packages/all'),
+          axios.get('/api/contacts', authHeaders),
+          axios.get('/api/custom-requests', authHeaders),
         ])
 
         const bookings = bookingsRes.data?.data || []

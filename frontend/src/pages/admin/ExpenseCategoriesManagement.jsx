@@ -21,7 +21,7 @@ function ExpenseCategoriesManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/expense-categories', getAuthHeaders())
+      const response = await axios.get('/api/expense-categories', getAuthHeaders())
       setCategories(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -48,7 +48,7 @@ function ExpenseCategoriesManagement() {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/expense-categories/create', formData, getAuthHeaders())
+      await axios.post('/api/expense-categories/create', formData, getAuthHeaders())
       resetForm()
       fetchCategories()
     } catch (err) {
@@ -59,7 +59,7 @@ function ExpenseCategoriesManagement() {
 
   const deleteCategory = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/expense-categories/${id}`, getAuthHeaders())
+      await axios.delete(`/api/expense-categories/${id}`, getAuthHeaders())
       fetchCategories()
     } catch (err) {
       console.error(err)
@@ -76,7 +76,7 @@ function ExpenseCategoriesManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/expense-categories/${item._id}`,
+        `/api/expense-categories/${item._id}`,
         { name, description },
         getAuthHeaders()
       )

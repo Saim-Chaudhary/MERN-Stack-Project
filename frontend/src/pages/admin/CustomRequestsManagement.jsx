@@ -16,7 +16,7 @@ function CustomRequestsManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/custom-requests', getAuthHeaders())
+      const response = await axios.get('/api/custom-requests', getAuthHeaders())
       setRequests(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -33,7 +33,7 @@ function CustomRequestsManagement() {
   const updateStatus = async (id, status) => {
     try {
       const payload = getStatusPayload(status)
-      await axios.put(`http://localhost:3000/api/custom-requests/${id}`, payload, getAuthHeaders())
+      await axios.put(`/api/custom-requests/${id}`, payload, getAuthHeaders())
       fetchRequests()
     } catch (err) {
       console.error(err)
@@ -43,7 +43,7 @@ function CustomRequestsManagement() {
 
   const deleteRequest = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/custom-requests/${id}`, getAuthHeaders())
+      await axios.delete(`/api/custom-requests/${id}`, getAuthHeaders())
       fetchRequests()
     } catch (err) {
       console.error(err)

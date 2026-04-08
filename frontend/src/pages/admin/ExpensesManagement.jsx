@@ -33,8 +33,8 @@ function ExpensesManagement() {
       setError('')
 
       const [expensesRes, categoriesRes] = await Promise.all([
-        axios.get('http://localhost:3000/api/expenses', getAuthHeaders()),
-        axios.get('http://localhost:3000/api/expense-categories', getAuthHeaders()),
+        axios.get('/api/expenses', getAuthHeaders()),
+        axios.get('/api/expense-categories', getAuthHeaders()),
       ])
 
       setExpenses(expensesRes.data?.data || [])
@@ -65,7 +65,7 @@ function ExpensesManagement() {
 
     try {
       const payload = getCreatePayload()
-      await axios.post('http://localhost:3000/api/expenses/create', payload, getAuthHeaders())
+      await axios.post('/api/expenses/create', payload, getAuthHeaders())
       resetForm()
       fetchData()
     } catch (err) {
@@ -76,7 +76,7 @@ function ExpensesManagement() {
 
   const deleteExpense = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/expenses/${id}`, getAuthHeaders())
+      await axios.delete(`/api/expenses/${id}`, getAuthHeaders())
       fetchData()
     } catch (err) {
       console.error(err)
@@ -96,7 +96,7 @@ function ExpensesManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/expenses/${item._id}`,
+        `/api/expenses/${item._id}`,
         {
           amount: Number(amountInput),
           description,

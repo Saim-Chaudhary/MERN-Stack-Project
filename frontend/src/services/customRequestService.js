@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3000/api/custom-requests'
-const AIRLINE_URL = 'http://localhost:3000/api/airlines'
+const API_URL = '/api/custom-requests'
+const AIRLINE_URL = '/api/airlines'
 
 const getAuthHeaders = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }

@@ -39,7 +39,7 @@ function GuideManagement() {
     try {
       setLoading(true)
       setError('')
-      const response = await axios.get('http://localhost:3000/api/guides', getAuthHeaders())
+      const response = await axios.get('/api/guides', getAuthHeaders())
       setGuides(response.data?.data || [])
     } catch (err) {
       console.error(err)
@@ -67,7 +67,7 @@ function GuideManagement() {
 
     try {
       const payload = getCreatePayload()
-      await axios.post('http://localhost:3000/api/guides/create', payload, getAuthHeaders())
+      await axios.post('/api/guides/create', payload, getAuthHeaders())
 
       resetForm()
       fetchGuides()
@@ -95,7 +95,7 @@ function GuideManagement() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/guides/${item._id}`,
+        `/api/guides/${item._id}`,
         {
           fullName,
           phone,
@@ -114,7 +114,7 @@ function GuideManagement() {
 
   const deleteGuide = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/guides/${id}`, getAuthHeaders())
+      await axios.delete(`/api/guides/${id}`, getAuthHeaders())
       fetchGuides()
     } catch (err) {
       console.error(err)
