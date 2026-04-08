@@ -45,6 +45,26 @@ const getAllPackages = async (req, res) => {
     }
 }
 
+const getAllPackagesAdmin = async (req, res) => {
+    try {
+        const allPackages = await Package.find()
+            .populate('airline', 'name')
+            .populate('hotels', 'name city category distanceFromHaram')
+            .populate('includedServices', 'name category');
+
+        return res.status(200).json({
+            message : "All packages fetched successfully",
+            data: allPackages
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message : "Error fetching all packages",
+            error : error.message
+        });
+    }
+}
+
 const getPackageById = async (req, res) => {
     try {
         const packageId = req.params.id;
@@ -125,6 +145,7 @@ const deletePackage = async (req, res) => {
 module.exports = {
     createPackage,
     getAllPackages,
+    getAllPackagesAdmin,
     getPackageById,
     updatePackage,
     deletePackage

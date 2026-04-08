@@ -1,4 +1,7 @@
 const Booking = require('../models/Booking');
+const User = require('../models/User');
+const Guide = require('../models/Guide');
+const Passenger = require('../models/Passenger');
 
 const createBooking = async (req, res) => {
     try {
@@ -18,6 +21,42 @@ const createBooking = async (req, res) => {
             numberOfInfants,
             totalPrice
         });
+
+        const defaultPassengers = [];
+        const adults = Number(numberOfAdults || 0);
+        const children = Number(numberOfChildren || 0);
+        const infants = Number(numberOfInfants || 0);
+
+        for (let i = 1; i <= adults; i++) {
+            defaultPassengers.push({
+                booking: newBooking._id,
+                fullName: `Adult Passenger ${i}`,
+                age: 30,
+                passengerType: 'Adult'
+            });
+        }
+
+        for (let i = 1; i <= children; i++) {
+            defaultPassengers.push({
+                booking: newBooking._id,
+                fullName: `Child Passenger ${i}`,
+                age: 10,
+                passengerType: 'Child'
+            });
+        }
+
+        for (let i = 1; i <= infants; i++) {
+            defaultPassengers.push({
+                booking: newBooking._id,
+                fullName: `Infant Passenger ${i}`,
+                age: 1,
+                passengerType: 'Infant'
+            });
+        }
+
+        if (defaultPassengers.length > 0) {
+            await Passenger.insertMany(defaultPassengers);
+        }
 
         return res.status(201).json({
             message: "Booking created successfully",
@@ -53,7 +92,8 @@ const getAllBookings = async (req, res) => {
 const getMyBookings = async (req, res) => {
     try {
         const myBookings = await Booking.find({ user: req.user.id })
-            .populate('package', 'title basePrice departureDate returnDate');
+            .populate('package', 'title basePrice departureDate returnDate')
+            .populate('assignedGuide', 'fullName phone email');
 
         return res.status(200).json({
             message: "Your bookings fetched successfully",
@@ -72,12 +112,25 @@ const getBookingById = async (req, res) => {
         const bookingId = req.params.id;
         const foundBooking = await Booking.findById(bookingId)
             .populate('user', 'fullName email phone')
-            .populate('package', 'title basePrice')
+            .populate({
+                path: 'package',
+                select: 'title basePrice duration transportType departureDate returnDate airline hotels',
+                populate: [
+                    { path: 'airline', select: 'name contactNumber' },
+                    { path: 'hotels', select: 'name city category distanceFromHaram' }
+                ]
+            })
             .populate('assignedGuide', 'fullName phone');
 
         if (!foundBooking) {
             return res.status(404).json({
                 message: "Booking not found"
+            });
+        }
+
+        if (req.user.role !== 'admin' && String(foundBooking.user?._id) !== String(req.user.id)) {
+            return res.status(403).json({
+                message: "Access denied"
             });
         }
 
@@ -145,11 +198,64 @@ const deleteBooking = async (req, res) => {
     }
 };
 
+const assignGuideToCustomer = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { guideId } = req.body;
+
+        if (!guideId) {
+            return res.status(400).json({
+                message: "Please provide guideId"
+            });
+        }
+
+        const foundUser = await User.findById(userId);
+        if (!foundUser) {
+            return res.status(404).json({
+                message: "Customer not found"
+            });
+        }
+
+        const foundGuide = await Guide.findById(guideId);
+        if (!foundGuide) {
+            return res.status(404).json({
+                message: "Guide not found"
+            });
+        }
+
+        const customerBookings = await Booking.find({ user: userId, status: { $ne: 'Cancelled' } }).select('_id');
+        if (customerBookings.length === 0) {
+            return res.status(404).json({
+                message: "No active bookings found for this customer"
+            });
+        }
+
+        const updateResult = await Booking.updateMany(
+            { user: userId, status: { $ne: 'Cancelled' } },
+            { assignedGuide: guideId }
+        );
+
+        return res.status(200).json({
+            message: "Guide assigned to customer bookings successfully",
+            data: {
+                matchedCount: updateResult.matchedCount,
+                modifiedCount: updateResult.modifiedCount
+            }
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error assigning guide to customer",
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     createBooking,
     getAllBookings,
     getMyBookings,
     getBookingById,
     updateBookingStatus,
-    deleteBooking
+    deleteBooking,
+    assignGuideToCustomer
 };
