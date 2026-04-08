@@ -1,17 +1,18 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import heroImg from '../../assets/unnamed.png'
 
 function HeroSection() {
   return (
     <>
-      <section className='relative min-h-[85vh] overflow-hidden'>
+      <section className='relative min-h-[88vh] overflow-hidden'>
         <div
           className='absolute inset-0 bg-cover bg-center'
           style={{ backgroundImage: `url(${heroImg})` }}
         ></div>
         <div className='absolute inset-0 bg-primary/60'></div>
 
-        <div className='relative z-10 mx-auto flex min-h-[78vh] max-w-7xl flex-col items-center justify-center px-6 text-center text-white'>
+        <div className='relative z-10 mx-auto flex min-h-[88vh] max-w-7xl flex-col items-center justify-center px-6 text-center text-white'>
           <p className='mb-4 rounded-full border border-white/25 bg-white/10 px-4 py-1 text-xs font-semibold tracking-widest'>
             TRUSTED UMRAH & TRAVEL SERVICES
           </p>
@@ -23,12 +24,18 @@ function HeroSection() {
           </p>
 
           <div className='mt-10 flex flex-col items-center gap-4 sm:flex-row'>
-            <button className='rounded bg-secondary px-7 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-secondary-hover cursor-pointer'>
+            <Link
+              to='/packages'
+              className='rounded bg-secondary px-7 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-secondary-hover cursor-pointer'
+            >
               View Packages
-            </button>
-            <button className='rounded border border-white px-7 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-white hover:text-primary cursor-pointer'>
+            </Link>
+            <Link
+              to='/contact'
+              className='rounded border border-white px-7 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-white hover:text-primary cursor-pointer'
+            >
               Request Custom Package
-            </button>
+            </Link>
           </div>
         </div>
       </section>

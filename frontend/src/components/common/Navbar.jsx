@@ -1,10 +1,24 @@
 import React, { useState } from 'react'
 import MosqueIcon from '@mui/icons-material/Mosque';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 function Navbar() {
+    const navigate = useNavigate()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+    const token = localStorage.getItem('token')
+    const userRole = localStorage.getItem('userRole')
+    const isLoggedIn = Boolean(token)
+    const dashboardPath = userRole === 'admin' ? '/admin/dashboard' : '/customer/dashboard'
+
+    const handleLogout = () => {
+        localStorage.removeItem('token')
+        localStorage.removeItem('userRole')
+        localStorage.removeItem('userName')
+        setIsMenuOpen(false)
+        navigate('/')
+    }
 
     const navLinks = [
         { label : 'Home', path: '/' },
@@ -32,10 +46,25 @@ function Navbar() {
                         ))}
                     </div>
 
-                    <div className='hidden md:block'>
-                        <button className='bg-secondary font-medium px-4 py-2 rounded text-white cursor-pointer transition-all duration-200 hover:bg-secondary-hover'>
-                            Login/SignUp
-                        </button>
+                    <div className='hidden md:flex items-center gap-2'>
+                        {isLoggedIn ? (
+                            <>
+                                <Link to={dashboardPath} className='inline-block bg-secondary font-medium px-4 py-2 rounded text-white cursor-pointer transition-all duration-200 hover:bg-secondary-hover'>
+                                    Dashboard
+                                </Link>
+                                <button
+                                    type='button'
+                                    onClick={handleLogout}
+                                    className='inline-block border border-primary/30 bg-white font-medium px-4 py-2 rounded text-primary cursor-pointer transition-all duration-200 hover:bg-primary/5'
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <Link to='/login' className='inline-block bg-secondary font-medium px-4 py-2 rounded text-white cursor-pointer transition-all duration-200 hover:bg-secondary-hover'>
+                                Login/SignUp
+                            </Link>
+                        )}
                     </div>
 
                     <button
@@ -55,9 +84,32 @@ function Navbar() {
                                 {link.label}
                             </Link>
                         ))}
-                        <button className='mt-2 bg-secondary px-4 py-2 rounded text-white text-sm font-medium w-full'>
-                            Login/SignUp
-                        </button>
+                        {isLoggedIn ? (
+                            <>
+                                <Link
+                                    to={dashboardPath}
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className='mt-2 bg-secondary px-4 py-2 rounded text-white text-sm font-medium w-full text-center'
+                                >
+                                    Dashboard
+                                </Link>
+                                <button
+                                    type='button'
+                                    onClick={handleLogout}
+                                    className='px-4 py-2 rounded border border-primary/30 text-primary text-sm font-medium w-full text-center'
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <Link
+                                to='/login'
+                                onClick={() => setIsMenuOpen(false)}
+                                className='mt-2 bg-secondary px-4 py-2 rounded text-white text-sm font-medium w-full text-center'
+                            >
+                                Login/SignUp
+                            </Link>
+                        )}
                     </div>
                 </div>
             )}
