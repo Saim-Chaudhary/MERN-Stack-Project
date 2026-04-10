@@ -1,6 +1,11 @@
+
 ```
 KAT_Project
+├─ api
+│  └─ [...all].js
 ├─ backend
+│  ├─ api
+│  │  └─ [...all].js
 │  ├─ config
 │  │  └─ db.js
 │  ├─ controllers
@@ -88,7 +93,8 @@ KAT_Project
 │  │  ├─ components
 │  │  │  ├─ common
 │  │  │  │  ├─ Footer.jsx
-│  │  │  │  └─ Navbar.jsx
+│  │  │  │  ├─ Navbar.jsx
+│  │  │  │  └─ ProtectedRoute.jsx
 │  │  │  ├─ home
 │  │  │  │  ├─ AboutSection.jsx
 │  │  │  │  ├─ CTASection.jsx
@@ -100,8 +106,6 @@ KAT_Project
 │  │  │  └─ ui
 │  │  ├─ constants
 │  │  ├─ data
-│  │  │  ├─ homePackages.js
-│  │  │  └─ homeTestimonials.js
 │  │  ├─ hooks
 │  │  ├─ index.css
 │  │  ├─ layouts
@@ -112,13 +116,30 @@ KAT_Project
 │  │  ├─ pages
 │  │  │  ├─ admin
 │  │  │  │  ├─ AdminDashboard.jsx
+│  │  │  │  ├─ AirlineManagement.jsx
 │  │  │  │  ├─ BookingManagement.jsx
+│  │  │  │  ├─ ContactsManagement.jsx
 │  │  │  │  ├─ CustomersManagement.jsx
+│  │  │  │  ├─ CustomRequestsManagement.jsx
+│  │  │  │  ├─ DocumentsManagement.jsx
+│  │  │  │  ├─ DocumentTypesManagement.jsx
+│  │  │  │  ├─ ExpenseCategoriesManagement.jsx
+│  │  │  │  ├─ ExpensesManagement.jsx
+│  │  │  │  ├─ GuideManagement.jsx
+│  │  │  │  ├─ HotelManagement.jsx
 │  │  │  │  ├─ PackagesManagement.jsx
-│  │  │  │  └─ Profile.jsx
+│  │  │  │  ├─ PassengersManagement.jsx
+│  │  │  │  ├─ PaymentsManagement.jsx
+│  │  │  │  ├─ Profile.jsx
+│  │  │  │  ├─ SeasonalPricesManagement.jsx
+│  │  │  │  ├─ ServicesManagement.jsx
+│  │  │  │  └─ TestimonialsManagement.jsx
 │  │  │  ├─ customer
+│  │  │  │  ├─ AssignedAgent.jsx
 │  │  │  │  ├─ BookingDetail.jsx
 │  │  │  │  ├─ CustomerDashboard.jsx
+│  │  │  │  ├─ CustomRequests.jsx
+│  │  │  │  ├─ Documents.jsx
 │  │  │  │  ├─ MyBookings.jsx
 │  │  │  │  └─ Profile.jsx
 │  │  │  └─ public
@@ -131,12 +152,21 @@ KAT_Project
 │  │  │     ├─ Register.jsx
 │  │  │     └─ Services.jsx
 │  │  ├─ services
+│  │  │  ├─ authService.js
+│  │  │  ├─ bookingService.js
+│  │  │  ├─ contactService.js
+│  │  │  ├─ customRequestService.js
+│  │  │  ├─ documentService.js
+│  │  │  ├─ packageService.js
+│  │  │  ├─ seasonalPriceService.js
+│  │  │  └─ testimonialService.js
 │  │  ├─ store
 │  │  ├─ theme
 │  │  └─ utils
+│  │     └─ seasonalPrice.js
 │  └─ vite.config.js
-├─ frontend-build-guide.md
 ├─ package.json
-└─ README.md
+├─ README.md
+└─ vercel.json
 
 ```
