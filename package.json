@@ -16,9 +16,6 @@
   "author": "",
   "license": "ISC",
   "description": "KAT Project - MERN Stack Travel Management System",
-  "dependencies": {
-    "serverless-http": "^4.0.0"
-  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }

@@ -24,26 +24,13 @@ const expenseCategoryRoutes = require("./routes/expenseCategoryRoutes");
 const seasonalPriceRoutes = require("./routes/seasonalPriceRoutes");
 
 dotenv.config();
-connectDB().catch((error) => {
-    console.error("Initial DB connect failed:", error.message);
-});
+connectDB();
 
 const app = express();
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
-
-app.use(async (req, res, next) => {
-    try {
-        await connectDB();
-        next();
-    } catch (error) {
-        return res.status(503).json({
-            message: "Database connection failed. Please try again shortly."
-        });
-    }
-});
 
 // Test route
 app.get("/", (req, res) => {
@@ -72,7 +59,7 @@ app.use("/api/seasonal-prices", seasonalPriceRoutes);
 // Global error handler - must be at the very bottom after all routes
 app.use(errorMiddleware);
 
-// Export app for Vercel serverless usage
+// Export app
 module.exports = app;
 
 // Keep local development behavior unchanged
