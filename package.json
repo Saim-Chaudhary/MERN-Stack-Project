@@ -5,6 +5,7 @@
     "install-backend": "cd backend && npm install",
     "install-frontend": "cd frontend && npm install",
     "install-all": "npm run install-backend && npm run install-frontend",
+    "build": "npm --prefix frontend run build",
     "dev-backend": "cd backend && npm run dev",
     "dev-frontend": "cd frontend && npm run dev",
     "dev": "concurrently \"npm run dev-backend\" \"npm run dev-frontend\"",
@@ -18,5 +19,15 @@
   "description": "KAT Project - MERN Stack Travel Management System",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.2.2",
+    "serverless-http": "^3.2.0"
   }
 }

@@ -24,13 +24,21 @@ const expenseCategoryRoutes = require("./routes/expenseCategoryRoutes");
 const seasonalPriceRoutes = require("./routes/seasonalPriceRoutes");
 
 dotenv.config();
-connectDB();
 
 const app = express();
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
 
 // Test route
 app.get("/", (req, res) => {
