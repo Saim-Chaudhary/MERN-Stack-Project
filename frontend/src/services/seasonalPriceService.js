@@ -4,7 +4,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || ''
 const API_URL = `${API_BASE_URL}/api/seasonal-prices`
 
 const getAllSeasonalPrices = async () => {
-  const response = await axios.get(API_URL)
+  const response = await axios.get(API_URL, { timeout: 15000 })
   return response.data?.data || []
 }
 
