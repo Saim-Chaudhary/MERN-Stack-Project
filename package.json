@@ -16,6 +16,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "description": "KAT Project - MERN Stack Travel Management System",
   "devDependencies": {
     "concurrently": "^8.2.2"
