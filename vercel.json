@@ -1,8 +1,18 @@
 {
+  "outputDirectory": "frontend/dist",
+  "functions": {
+    "api/[...all].js": {
+      "maxDuration": 60
+    }
+  },
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/[...all].js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/dist/$1"
     }
   ]
 }

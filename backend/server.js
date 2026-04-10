@@ -1,4 +1,4 @@
-const dotenv = require("dotenv");
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -23,26 +23,28 @@ const expenseRoutes = require("./routes/expenseRoutes");
 const expenseCategoryRoutes = require("./routes/expenseCategoryRoutes");
 const seasonalPriceRoutes = require("./routes/seasonalPriceRoutes");
 
-dotenv.config();
-
 const app = express();
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
 
-app.use(async (req, res, next) => {
+// Test route
+app.get("/", (req, res) => {
+    res.send("API is running...");
+});
+
+app.get("/api", (req, res) => {
+    res.send("API is running...");
+});
+
+app.use("/api", async (req, res, next) => {
     try {
         await connectDB();
         next();
     } catch (error) {
         next(error);
     }
-});
-
-// Test route
-app.get("/", (req, res) => {
-    res.send("API is running...");
 });
 
 // All API routes
