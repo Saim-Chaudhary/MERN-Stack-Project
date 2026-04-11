@@ -4,20 +4,34 @@ const createExpense = async (req, res) => {
     try {
         const { category, amount, description, relatedBooking, expenseDate } = req.body;
 
-        if (!amount) {
+        if (!category) {
             return res.status(400).json({
-                message: "Please provide the expense amount"
+                message: "Please select an expense category"
             });
         }
 
-        const newExpense = await Expense.create({
+        if (!amount || Number(amount) <= 0) {
+            return res.status(400).json({
+                message: "Please provide a valid expense amount"
+            });
+        }
+
+        const payload = {
             category,
-            amount,
-            description,
-            relatedBooking,
-            expenseDate,
+            amount: Number(amount),
+            description: description || '',
             createdBy: req.user.id
-        });
+        };
+
+        if (relatedBooking) {
+            payload.relatedBooking = relatedBooking;
+        }
+
+        if (expenseDate) {
+            payload.expenseDate = expenseDate;
+        }
+
+        const newExpense = await Expense.create(payload);
 
         return res.status(201).json({
             message: "Expense recorded successfully",

@@ -6,6 +6,7 @@ import BookOnlineIcon from '@mui/icons-material/BookOnline'
 import DescriptionIcon from '@mui/icons-material/Description'
 import SupportAgentIcon from '@mui/icons-material/SupportAgent'
 import RequestPageIcon from '@mui/icons-material/RequestPage'
+import ReviewsIcon from '@mui/icons-material/Reviews'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
 
@@ -36,14 +37,21 @@ function CustomerLayout() {
         <aside className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-primary transition-transform duration-200 md:static md:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
-          <div className='flex h-16 items-center gap-3 border-b border-white/10 px-5'>
-            <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-secondary'>
-              <MosqueIcon className='text-white' fontSize='small' />
+          <div className='px-4 pb-3 pt-4'>
+            <div className='rounded-2xl border border-white/20 bg-white/10 px-4 py-4 shadow-lg'>
+              <div className='mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary'>
+                <MosqueIcon className='text-white' />
+              </div>
+              <h1 className='font-serif text-lg font-bold text-white'>Karwan-e-Arzoo</h1>
+              <p className='mt-1 text-xs font-medium uppercase tracking-wide text-slate-200'>
+                Customer Panel
+              </p>
             </div>
-            <h1 className='font-serif text-base font-bold text-white'>Karwan-e-Arzoo</h1>
           </div>
 
-          <nav className='flex flex-1 flex-col gap-1 px-3 py-5'>
+          <div className='mx-3 border-b border-white/10' />
+
+          <nav className='flex flex-1 flex-col gap-1 px-3 py-4'>
             <Link
               to='/customer/dashboard'
               onClick={() => setSidebarOpen(false)}
@@ -97,6 +105,17 @@ function CustomerLayout() {
             >
               <RequestPageIcon fontSize='small' />
               Custom Requests
+            </Link>
+
+            <Link
+              to='/customer/testimonials'
+              onClick={() => setSidebarOpen(false)}
+              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                isActive('/customer/testimonials') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <ReviewsIcon fontSize='small' />
+              My Feedback
             </Link>
 
             <Link

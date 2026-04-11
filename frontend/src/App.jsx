@@ -17,6 +17,7 @@ import CustomerProfile from './pages/customer/Profile';
 import Documents from './pages/customer/Documents';
 import AssignedAgent from './pages/customer/AssignedAgent';
 import CustomRequests from './pages/customer/CustomRequests';
+import CustomerTestimonials from './pages/customer/CustomerTestimonials';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -63,6 +64,7 @@ function App(){
                     <Route path="/customer/documents" element={<Documents />} />
                     <Route path="/customer/assigned-agent" element={<AssignedAgent />} />
                     <Route path="/customer/custom-requests" element={<CustomRequests />} />
+                    <Route path="/customer/testimonials" element={<CustomerTestimonials />} />
                     <Route path="/customer/profile" element={<CustomerProfile />} />
                 </Route>
 

@@ -13,7 +13,12 @@ const getMyDocuments = async () => {
 }
 
 const uploadDocument = async (payload) => {
-  const response = await axios.post(`${API_URL}/upload`, payload, getAuthHeaders())
+  const response = await axios.post(`${API_URL}/upload`, payload, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'multipart/form-data'
+    }
+  })
   return response.data
 }
 

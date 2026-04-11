@@ -2,49 +2,51 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
 function ExpensesManagement() {
-  const [expenses, setExpenses] = useState([])
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [formData, setFormData] = useState({
+  const emptyForm = {
     category: '',
     amount: '',
     description: '',
     relatedBooking: '',
     expenseDate: '',
-  })
+  }
 
-  const getAuthHeaders = () => ({
+  const [expenses, setExpenses] = useState([])
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [formData, setFormData] = useState(emptyForm)
+
+  const getAuthConfig = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
   })
 
   const resetForm = () => {
-    setFormData({ category: '', amount: '', description: '', relatedBooking: '', expenseDate: '' })
+    setFormData(emptyForm)
   }
 
-  const getCreatePayload = () => ({
-    ...formData,
-    amount: Number(formData.amount),
-  })
+  const fetchExpenses = async () => {
+    const response = await axios.get('/api/expenses', getAuthConfig())
+    setExpenses(response.data?.data || [])
+  }
+
+  const fetchCategories = async () => {
+    const response = await axios.get('/api/expense-categories', getAuthConfig())
+    setCategories(response.data?.data || [])
+  }
 
   const fetchData = async () => {
+    setLoading(true)
+    setError('')
+
     try {
-      setLoading(true)
-      setError('')
-
-      const [expensesRes, categoriesRes] = await Promise.all([
-        axios.get('/api/expenses', getAuthHeaders()),
-        axios.get('/api/expense-categories', getAuthHeaders()),
-      ])
-
-      setExpenses(expensesRes.data?.data || [])
-      setCategories(categoriesRes.data?.data || [])
+      await fetchExpenses()
+      await fetchCategories()
     } catch (err) {
       console.error(err)
       setError('Failed to load expenses')
-    } finally {
-      setLoading(false)
     }
+
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -53,31 +55,53 @@ function ExpensesManagement() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData({ ...formData, [name]: value })
   }
 
   const handleCreate = async (e) => {
     e.preventDefault()
-    if (!formData.amount) {
-      setError('Amount is required')
+    setError('')
+
+    const amountNumber = Number(formData.amount)
+
+    if (!formData.category) {
+      setError('Please select a category')
+      return
+    }
+
+    if (!formData.amount || amountNumber <= 0) {
+      setError('Please enter a valid amount')
       return
     }
 
     try {
-      const payload = getCreatePayload()
-      await axios.post('/api/expenses/create', payload, getAuthHeaders())
+      const payload = {
+        category: formData.category,
+        amount: amountNumber,
+        description: formData.description.trim(),
+      }
+
+      if (formData.relatedBooking.trim() !== '') {
+        payload.relatedBooking = formData.relatedBooking.trim()
+      }
+
+      if (formData.expenseDate !== '') {
+        payload.expenseDate = formData.expenseDate
+      }
+
+      await axios.post('/api/expenses/create', payload, getAuthConfig())
       resetForm()
-      fetchData()
+      await fetchData()
     } catch (err) {
       console.error(err)
-      setError('Failed to create expense')
+      setError(err.response?.data?.message || 'Failed to create expense')
     }
   }
 
   const deleteExpense = async (id) => {
     try {
-      await axios.delete(`/api/expenses/${id}`, getAuthHeaders())
-      fetchData()
+      await axios.delete(`/api/expenses/${id}`, getAuthConfig())
+      await fetchData()
     } catch (err) {
       console.error(err)
       setError('Failed to delete expense')
@@ -95,18 +119,26 @@ function ExpensesManagement() {
     if (expenseDate === null) return
 
     try {
+      const updatePayload = {
+        amount: Number(amountInput),
+        description,
+        category: item.category?._id,
+      }
+
+      if (expenseDate !== '') {
+        updatePayload.expenseDate = expenseDate
+      }
+
+      if (item.relatedBooking?._id) {
+        updatePayload.relatedBooking = item.relatedBooking._id
+      }
+
       await axios.put(
         `/api/expenses/${item._id}`,
-        {
-          amount: Number(amountInput),
-          description,
-          expenseDate: expenseDate || undefined,
-          category: item.category?._id,
-          relatedBooking: item.relatedBooking?._id,
-        },
-        getAuthHeaders()
+        updatePayload,
+        getAuthConfig()
       )
-      fetchData()
+      await fetchData()
     } catch (err) {
       console.error(err)
       setError('Failed to update expense')

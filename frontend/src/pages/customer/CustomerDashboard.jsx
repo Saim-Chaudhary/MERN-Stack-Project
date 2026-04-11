@@ -9,6 +9,8 @@ import PersonIcon from '@mui/icons-material/Person'
 import DescriptionIcon from '@mui/icons-material/Description'
 import SupportAgentIcon from '@mui/icons-material/SupportAgent'
 import RequestPageIcon from '@mui/icons-material/RequestPage'
+import ReviewsIcon from '@mui/icons-material/Reviews'
+import HomeIcon from '@mui/icons-material/Home'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 function CustomerDashboard() {
@@ -48,6 +50,13 @@ function CustomerDashboard() {
         <p className='text-sm font-medium text-white/70'>Welcome back</p>
         <h1 className='mt-1 font-serif text-2xl font-bold'>{userName}</h1>
         <p className='mt-1 text-sm text-white/60'>Here is your Umrah journey overview</p>
+        <Link
+          to='/'
+          className='mt-4 inline-flex items-center gap-2 rounded-lg bg-white/15 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20'
+        >
+          <HomeIcon fontSize='small' />
+          Go to Home
+        </Link>
       </div>
 
       {/* Stats */}
@@ -170,6 +179,22 @@ function CustomerDashboard() {
             <div>
               <p className='font-semibold text-slate-800'>My Profile</p>
               <p className='text-sm text-slate-500'>View your account details</p>
+            </div>
+          </div>
+          <ArrowForwardIcon className='text-slate-400' fontSize='small' />
+        </Link>
+
+        <Link
+          to='/customer/testimonials'
+          className='flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-6 shadow-soft transition-shadow hover:shadow-md'
+        >
+          <div className='flex items-center gap-4'>
+            <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100'>
+              <ReviewsIcon className='text-emerald-700' />
+            </div>
+            <div>
+              <p className='font-semibold text-slate-800'>Share Feedback</p>
+              <p className='text-sm text-slate-500'>Submit your testimonial about your journey</p>
             </div>
           </div>
           <ArrowForwardIcon className='text-slate-400' fontSize='small' />

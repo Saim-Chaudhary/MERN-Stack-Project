@@ -45,14 +45,21 @@ function AdminLayout() {
                 <aside className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-primary transition-transform duration-200 md:static md:translate-x-0 ${
                     sidebarOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}>
-                    <div className='flex h-16 items-center gap-3 border-b border-white/10 px-5'>
-                        <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-secondary'>
-                            <MosqueIcon className='text-white' fontSize='small' />
+                    <div className='px-4 pb-3 pt-4'>
+                        <div className='rounded-2xl border border-white/20 bg-white/10 px-4 py-4 shadow-lg'>
+                            <div className='mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary'>
+                                <MosqueIcon className='text-white' />
+                            </div>
+                            <h1 className='font-serif text-lg font-bold text-white'>Karwan-e-Arzoo</h1>
+                            <p className='mt-1 text-xs font-medium uppercase tracking-wide text-slate-200'>
+                                Admin Panel
+                            </p>
                         </div>
-                        <h1 className='font-serif text-base font-bold text-white'>Karwan-e-Arzoo</h1>
                     </div>
 
-                    <nav className='flex flex-1 flex-col gap-1 px-3 py-5'>
+                    <div className='mx-3 border-b border-white/10' />
+
+                    <nav className='flex flex-1 flex-col gap-1 px-3 py-4'>
                         <Link
                             to='/admin/dashboard'
                             onClick={() => setSidebarOpen(false)}

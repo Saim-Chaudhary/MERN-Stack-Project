@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import documentService from '../../services/documentService'
 import DescriptionIcon from '@mui/icons-material/Description'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
 
 function Documents() {
   const [documents, setDocuments] = useState([])
   const [documentTypes, setDocumentTypes] = useState([])
+  const [selectedDocumentType, setSelectedDocumentType] = useState('')
+  const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
-
-  const [formData, setFormData] = useState({
-    documentType: '',
-    fileUrl: ''
-  })
+  const fileInputRef = useRef(null)
 
   const getStatusClass = (status) => {
     if (status === 'Verified') return 'bg-emerald-100 text-emerald-700'
@@ -25,12 +24,33 @@ function Documents() {
   const fetchData = async () => {
     try {
       setLoading(true)
-      const myDocs = await documentService.getMyDocuments()
-      const types = await documentService.getDocumentTypes()
-      setDocuments(myDocs)
-      setDocumentTypes(types)
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load documents')
+      setError('')
+      let firstError = ''
+
+      const [myDocsResult, typesResult] = await Promise.allSettled([
+        documentService.getMyDocuments(),
+        documentService.getDocumentTypes()
+      ])
+
+      if (myDocsResult.status === 'fulfilled') {
+        setDocuments(myDocsResult.value)
+      } else {
+        setDocuments([])
+        firstError = myDocsResult.reason?.response?.data?.message || 'Failed to load your documents'
+      }
+
+      if (typesResult.status === 'fulfilled') {
+        setDocumentTypes(typesResult.value)
+      } else {
+        setDocumentTypes([])
+        if (!firstError) {
+          firstError = typesResult.reason?.response?.data?.message || 'Failed to load document types'
+        }
+      }
+
+      if (firstError) {
+        setError(firstError)
+      }
     } finally {
       setLoading(false)
     }
@@ -40,8 +60,41 @@ function Documents() {
     fetchData()
   }, [])
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+  const handleDocumentTypeChange = (e) => {
+    setSelectedDocumentType(e.target.value)
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0] || null
+
+    if (!file) {
+      setSelectedFile(null)
+      return
+    }
+
+    const maxFileSize = 5 * 1024 * 1024
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png']
+
+    if (!allowedTypes.includes(file.type)) {
+      setError('Only PDF, JPG, and PNG files are allowed')
+      setSelectedFile(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
+
+    if (file.size > maxFileSize) {
+      setError('File size must be 5MB or smaller')
+      setSelectedFile(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
+
+    setError('')
+    setSelectedFile(file)
   }
 
   const handleSubmit = async (e) => {
@@ -49,16 +102,24 @@ function Documents() {
     setMessage('')
     setError('')
 
-    if (!formData.documentType || !formData.fileUrl) {
-      setError('Please select document type and add file URL')
+    if (!selectedDocumentType || !selectedFile) {
+      setError('Please select document type and choose a file')
       return
     }
 
     try {
       setSubmitting(true)
-      await documentService.uploadDocument(formData)
+      const payload = new FormData()
+      payload.append('documentType', selectedDocumentType)
+      payload.append('file', selectedFile)
+
+      await documentService.uploadDocument(payload)
       setMessage('Document submitted successfully')
-      setFormData({ documentType: '', fileUrl: '' })
+      setSelectedDocumentType('')
+      setSelectedFile(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
       fetchData()
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to upload document')
@@ -81,8 +142,8 @@ function Documents() {
             <label className='mb-1 block text-sm font-medium text-slate-700'>Document Type</label>
             <select
               name='documentType'
-              value={formData.documentType}
-              onChange={handleChange}
+              value={selectedDocumentType}
+              onChange={handleDocumentTypeChange}
               className='w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-primary'
             >
               <option value=''>Select document type</option>
@@ -90,18 +151,25 @@ function Documents() {
                 <option key={type._id} value={type._id}>{type.name}</option>
               ))}
             </select>
+            {documentTypes.length === 0 && (
+              <p className='mt-1 text-xs text-amber-600'>No document types found. Please ask admin to add document types first.</p>
+            )}
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium text-slate-700'>File URL</label>
-            <input
-              type='text'
-              name='fileUrl'
-              value={formData.fileUrl}
-              onChange={handleChange}
-              placeholder='Paste file URL'
-              className='w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-primary'
-            />
+            <label className='mb-1 block text-sm font-medium text-slate-700'>Document File</label>
+            <label className='flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100'>
+              <UploadFileIcon className='text-slate-500' />
+              <span>{selectedFile ? selectedFile.name : 'Choose file to upload'}</span>
+              <input
+                ref={fileInputRef}
+                type='file'
+                accept='.pdf,.jpg,.jpeg,.png'
+                onChange={handleFileChange}
+                className='hidden'
+              />
+            </label>
+            <p className='mt-1 text-xs text-slate-500'>Allowed: PDF, JPG, PNG (max 5MB)</p>
           </div>
 
           <button

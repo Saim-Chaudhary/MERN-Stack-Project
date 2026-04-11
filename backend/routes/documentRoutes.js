@@ -3,8 +3,9 @@ const router = express.Router();
 const documentController = require('../controllers/documentController');
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
+const upload = require('../config/multer');
 
-router.post('/upload', authMiddleware, documentController.uploadDocument);
+router.post('/upload', authMiddleware, upload.single('file'), documentController.uploadDocument);
 router.get('/my', authMiddleware, documentController.getMyDocuments);
 
 router.get('/', authMiddleware, adminMiddleware, documentController.getAllDocuments);

@@ -2,11 +2,12 @@ const Document = require('../models/Document');
 
 const uploadDocument = async (req, res) => {
     try {
-        const { documentType, fileUrl } = req.body;
+        const { documentType } = req.body;
+        const fileUrl = req.file?.path;
 
         if (!documentType || !fileUrl) {
             return res.status(400).json({
-                message: "Please provide documentType and fileUrl"
+                message: "Please provide documentType and upload a file"
             });
         }
 

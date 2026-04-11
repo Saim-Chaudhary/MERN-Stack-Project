@@ -31,7 +31,7 @@ function HeroSection() {
               View Packages
             </Link>
             <Link
-              to='/contact'
+              to='/login'
               className='rounded border border-white px-7 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-white hover:text-primary cursor-pointer'
             >
               Request Custom Package

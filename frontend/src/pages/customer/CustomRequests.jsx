@@ -141,22 +141,22 @@ function CustomRequests() {
             <input type='number' min='1' name='duration' value={formData.duration} onChange={handleChange} placeholder='e.g. 7' className='w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-primary' />
           </div>
 
-          <div>
+          <div className='mt-3 border-t-2 border-primary/40 pt-4 sm:col-span-2'>
             <label className='mb-1 block text-sm font-medium text-slate-700'>Number of Adults</label>
             <input type='number' min='1' name='numberOfAdults' value={formData.numberOfAdults} onChange={handleChange} className='w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-primary' />
           </div>
 
-          <div>
+          <div className='sm:col-span-2'>
             <label className='mb-1 block text-sm font-medium text-slate-700'>Number of Children</label>
             <input type='number' min='0' name='numberOfChildren' value={formData.numberOfChildren} onChange={handleChange} className='w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-primary' />
           </div>
 
-          <div>
+          <div className='sm:col-span-2'>
             <label className='mb-1 block text-sm font-medium text-slate-700'>Number of Infants</label>
             <input type='number' min='0' name='numberOfInfants' value={formData.numberOfInfants} onChange={handleChange} className='w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-primary' />
           </div>
 
-          <div>
+          <div className='mt-3 border-t-2 border-primary/40 pt-4 sm:col-span-2'>
             <label className='mb-1 block text-sm font-medium text-slate-700'>Offered Price</label>
             <input type='number' min='0' name='offeredPrice' value={formData.offeredPrice} onChange={handleChange} placeholder='optional' className='w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-primary' />
           </div>
@@ -195,7 +195,12 @@ function CustomRequests() {
                   {r.duration} nights • {r.hotelType} • {r.transportType}
                 </p>
                 <p className='text-sm text-slate-500'>
-                  Adults: {r.numberOfAdults}, Children: {r.numberOfChildren || 0}, Infants: {r.numberOfInfants || 0}
+                  Adults: {r.numberOfAdults}
+                </p>
+                <p className='text-sm text-slate-500'>Children: {r.numberOfChildren || 0}</p>
+                <p className='text-sm text-slate-500'>Infants: {r.numberOfInfants || 0}</p>
+                <p className='text-sm text-slate-500'>
+                  Offered Price: {r.offeredPrice ? `PKR ${r.offeredPrice}` : 'Not offered'}
                 </p>
                 {r.preferredAirline?.name && <p className='text-sm text-slate-500'>Airline: {r.preferredAirline.name}</p>}
               </div>

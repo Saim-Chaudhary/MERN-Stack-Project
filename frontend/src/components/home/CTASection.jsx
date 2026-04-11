@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function CTASection() {
   return (
@@ -11,12 +12,18 @@ function CTASection() {
           </p>
 
           <div className='mt-8 flex flex-col justify-center gap-4 sm:flex-row'>
-            <button className='rounded bg-secondary px-7 py-3 text-sm font-semibold text-white hover:bg-secondary-hover transition-all duration-200 cursor-pointer'>
+            <Link
+              to='/packages'
+              className='rounded bg-secondary px-7 py-3 text-center text-sm font-semibold text-white hover:bg-secondary-hover transition-all duration-200 cursor-pointer'
+            >
               Book Your Package
-            </button>
-            <button className='rounded border border-white px-7 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-all duration-200 cursor-pointer'>
+            </Link>
+            <Link
+              to='/contact'
+              className='rounded border border-white px-7 py-3 text-center text-sm font-semibold text-white hover:bg-white/10 transition-all duration-200 cursor-pointer'
+            >
               Talk To An Expert
-            </button>
+            </Link>
           </div>
         </div>
       </section>
