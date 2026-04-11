@@ -5,6 +5,7 @@ const createCustomRequest = async (req, res) => {
         const {
             preferredAirline,
             hotelType,
+            hotelName,
             transportType,
             duration,
             numberOfAdults,
@@ -24,6 +25,7 @@ const createCustomRequest = async (req, res) => {
             user: req.user.id,
             preferredAirline,
             hotelType,
+            hotelName,
             transportType,
             duration,
             numberOfAdults,

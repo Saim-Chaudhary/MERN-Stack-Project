@@ -10,6 +10,8 @@ const customRequestSchema = new mongoose.Schema({
 
   hotelType: { type: String, enum: ["3 Star", "4 Star", "5 Star"] },
 
+  hotelName: { type: String, trim: true },
+
   transportType: { type: String, enum: ["Sharing", "Private", "VIP"] },
 
   duration: Number,

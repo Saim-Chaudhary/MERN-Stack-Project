@@ -192,7 +192,7 @@ function CustomRequests() {
             <div key={r._id} className='flex flex-wrap items-center justify-between gap-3 px-6 py-4'>
               <div>
                 <p className='font-medium text-slate-800'>
-                  {r.duration} nights • {r.hotelType} • {r.transportType}
+                  {r.duration} nights • {r.hotelName ? `${r.hotelType} - ${r.hotelName}` : r.hotelType} • {r.transportType}
                 </p>
                 <p className='text-sm text-slate-500'>
                   Adults: {r.numberOfAdults}
