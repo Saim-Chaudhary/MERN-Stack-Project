@@ -26,8 +26,14 @@ const seasonalPriceRoutes = require("./routes/seasonalPriceRoutes");
 const app = express();
 
 // Middlewares
-app.use(cors());
 app.use(express.json());
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://mern-stack-project-three-vert.vercel.app"
+  ],
+  credentials: true
+}));
 
 // Test route
 app.get("/", (req, res) => {
@@ -38,14 +44,8 @@ app.get("/api", (req, res) => {
     res.send("API is running...");
 });
 
-app.use("/api", async (req, res, next) => {
-    try {
-        await connectDB();
-        next();
-    } catch (error) {
-        next(error);
-    }
-});
+connectDB();
+ 
 
 // All API routes
 app.use("/api/auth", authRoutes);
