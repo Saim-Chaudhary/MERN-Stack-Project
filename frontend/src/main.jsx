@@ -5,6 +5,11 @@ import axios from 'axios';
 import './index.css';
 import App from './App.jsx';
 
+const apiBaseUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
+if (apiBaseUrl) {
+  axios.defaults.baseURL = apiBaseUrl;
+}
+
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
