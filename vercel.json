@@ -5,14 +5,14 @@
       "maxDuration": 60
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/[...all].js"
+      "source": "/api/:path*",
+      "destination": "/api/[...all].js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/frontend/dist/$1"
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ]
 }
