@@ -43,7 +43,10 @@ app.use(cors({
       return callback(null, true);
     }
 
-    if (allowedOrigins.includes(origin)) {
+    const isAllowedExactOrigin = allowedOrigins.includes(origin);
+    const isVercelAppOrigin = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+
+    if (isAllowedExactOrigin || isVercelAppOrigin) {
       return callback(null, true);
     }
 
