@@ -25,13 +25,30 @@ const seasonalPriceRoutes = require("./routes/seasonalPriceRoutes");
 
 const app = express();
 
+const defaultAllowedOrigins = [
+  "http://localhost:3000",
+  "https://mern-stack-project-three-vert.vercel.app"
+];
+
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
+  : defaultAllowedOrigins;
+
 // Middlewares
 app.use(express.json());
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://mern-stack-project-three-vert.vercel.app"
-  ],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (curl, server-to-server, health checks)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
   credentials: true
 }));
 
@@ -42,6 +59,10 @@ app.get("/", (req, res) => {
 
 app.get("/api", (req, res) => {
     res.send("API is running...");
+});
+
+app.get("/healthz", (req, res) => {
+  res.status(200).json({ status: "ok" });
 });
 
 connectDB();
