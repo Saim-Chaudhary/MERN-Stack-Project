@@ -6,6 +6,8 @@
     "install-frontend": "cd frontend && npm install",
     "install-all": "npm run install-backend && npm run install-frontend",
     "build": "npm --prefix frontend install --include=dev && npm --prefix frontend run build",
+    "render-build": "npm --prefix backend install",
+    "render-start": "npm --prefix backend start",
     "dev-backend": "cd backend && npm run dev",
     "dev-frontend": "cd frontend && npm run dev",
     "dev": "concurrently \"npm run dev-backend\" \"npm run dev-frontend\"",
@@ -17,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": ">=20.19.0"
+    "node": "20.x"
   },
   "description": "KAT Project - MERN Stack Travel Management System",
   "devDependencies": {
