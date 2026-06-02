@@ -10,6 +10,7 @@ import PendingActionsIcon from '@mui/icons-material/PendingActions'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import HomeIcon from '@mui/icons-material/Home'
+import BadgeIcon from '@mui/icons-material/Badge'
 
 function AdminDashboard() {
   const [loading, setLoading] = useState(true)
@@ -21,6 +22,7 @@ function AdminDashboard() {
     totalPackages: 0,
     totalContacts: 0,
     totalCustomRequests: 0,
+    totalEmployees: 0,
   })
 
   const userName = localStorage.getItem('userName') || 'Admin'
@@ -36,7 +38,9 @@ function AdminDashboard() {
     return bookings.filter((booking) => booking.status === status).length
   }
 
-  const buildStats = ({ bookings, packages, contacts, customRequests }) => {
+  const buildStats = ({ bookings, packages, contacts, customRequests, users }) => {
+    const employees = users.filter((user) => user.role === 'admin')
+
     return {
       totalBookings: bookings.length,
       pendingBookings: countByStatus(bookings, 'Pending'),
@@ -44,6 +48,7 @@ function AdminDashboard() {
       totalPackages: packages.length,
       totalContacts: contacts.length,
       totalCustomRequests: customRequests.length,
+      totalEmployees: employees.length,
     }
   }
 
@@ -55,19 +60,21 @@ function AdminDashboard() {
 
         const authHeaders = getAuthHeaders()
 
-        const [bookingsRes, packagesRes, contactsRes, customRequestsRes] = await Promise.all([
+        const [bookingsRes, packagesRes, contactsRes, customRequestsRes, usersRes] = await Promise.all([
           axios.get('/api/bookings', authHeaders),
           axios.get('/api/packages/all'),
           axios.get('/api/contacts', authHeaders),
           axios.get('/api/custom-requests', authHeaders),
+          axios.get('/api/auth/users', authHeaders),
         ])
 
         const bookings = bookingsRes.data?.data || []
         const packages = packagesRes.data?.data || []
         const contacts = contactsRes.data?.data || []
         const customRequests = customRequestsRes.data?.data || []
+        const users = usersRes.data?.data || []
 
-        const nextStats = buildStats({ bookings, packages, contacts, customRequests })
+        const nextStats = buildStats({ bookings, packages, contacts, customRequests, users })
         setStats(nextStats)
       } catch (err) {
         console.error(err)
@@ -149,6 +156,14 @@ function AdminDashboard() {
             </div>
             <p className='text-2xl font-bold text-slate-800'>{stats.totalCustomRequests}</p>
             <p className='mt-0.5 text-xs font-medium text-slate-500'>Custom Requests</p>
+          </div>
+
+          <div className='rounded-2xl border border-slate-100 bg-white p-5 shadow-soft'>
+            <div className='mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-fuchsia-500 text-white'>
+              <BadgeIcon fontSize='small' />
+            </div>
+            <p className='text-2xl font-bold text-slate-800'>{stats.totalEmployees}</p>
+            <p className='mt-0.5 text-xs font-medium text-slate-500'>Employees</p>
           </div>
         </div>
       )}
@@ -235,6 +250,22 @@ function AdminDashboard() {
             <div>
               <p className='font-semibold text-slate-800'>Contact Messages</p>
               <p className='text-sm text-slate-500'>Read and manage customer contact messages</p>
+            </div>
+          </div>
+          <ArrowForwardIcon className='text-slate-400' fontSize='small' />
+        </Link>
+
+        <Link
+          to='/admin/employees'
+          className='flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-6 shadow-soft transition-shadow hover:shadow-md'
+        >
+          <div className='flex items-center gap-4'>
+            <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-fuchsia-100'>
+              <BadgeIcon className='text-fuchsia-600' />
+            </div>
+            <div>
+              <p className='font-semibold text-slate-800'>Employee Management</p>
+              <p className='text-sm text-slate-500'>Manage admin team accounts</p>
             </div>
           </div>
           <ArrowForwardIcon className='text-slate-400' fontSize='small' />

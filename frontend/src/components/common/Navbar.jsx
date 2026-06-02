@@ -21,11 +21,11 @@ function Navbar() {
     }
 
     const navLinks = [
-        { label : 'Home', path: '/' },
-        { label : 'Packages', path: '/packages' },
-        { label : 'Services', path: '/services' },
-        { label : 'About', path: '/about' },
-        { label : 'Contact', path: '/contact' },
+        { label: 'Home', path: '/' },
+        { label: 'Packages', path: '/packages' },
+        { label: 'Services', path: '/services' },
+        { label: 'About', path: '/about' },
+        { label: 'Contact', path: '/contact' },
     ]
     return (
         <>
@@ -107,7 +107,7 @@ function Navbar() {
                                 onClick={() => setIsMenuOpen(false)}
                                 className='mt-2 bg-secondary px-4 py-2 rounded text-white text-sm font-medium w-full text-center'
                             >
-                                Login/SignUp
+                                Sign In
                             </Link>
                         )}
                     </div>

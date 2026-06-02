@@ -17,6 +17,7 @@ import EventIcon from '@mui/icons-material/Event'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
+import BadgeIcon from '@mui/icons-material/Badge'
 
 function AdminLayout() {
     const location = useLocation()
@@ -102,6 +103,17 @@ function AdminLayout() {
                         >
                             <GroupIcon fontSize='small' />
                             Customers
+                        </Link>
+
+                        <Link
+                            to='/admin/employees'
+                            onClick={() => setSidebarOpen(false)}
+                            className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                                isActive('/admin/employees') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            }`}
+                        >
+                            <BadgeIcon fontSize='small' />
+                            Employees
                         </Link>
 
                         <Link

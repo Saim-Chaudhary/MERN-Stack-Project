@@ -39,6 +39,7 @@ import SeasonalPricesManagement from './pages/admin/SeasonalPricesManagement';
 import ExpenseCategoriesManagement from './pages/admin/ExpenseCategoriesManagement';
 import ExpensesManagement from './pages/admin/ExpensesManagement';
 import PassengersManagement from './pages/admin/PassengersManagement';
+import EmployeesManagement from './pages/admin/EmployeesManagement';
 
 
 function App(){
@@ -87,6 +88,7 @@ function App(){
                     <Route path='/admin/expense-categories' element={<ExpenseCategoriesManagement />} />
                     <Route path='/admin/expenses' element={<ExpensesManagement />} />
                     <Route path='/admin/passengers' element={<PassengersManagement />} />
+                    <Route path='/admin/employees' element={<EmployeesManagement />} />
                     <Route path='/admin/profile' element={<Profile />} />
                 </Route>
             </Routes>
