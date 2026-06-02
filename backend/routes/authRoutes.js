@@ -16,3 +16,6 @@ router.put('/users/:id/role', authMiddleware, adminMiddleware, authController.up
 router.delete('/users/:id', authMiddleware, adminMiddleware, authController.deleteUserAdmin);
 
 module.exports = router;
+
+
+//Ali were here :]
