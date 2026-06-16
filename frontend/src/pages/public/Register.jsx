@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import authService from '../../services/authService'
+import assetService from '../../services/assetService'
 import MosqueIcon from '@mui/icons-material/Mosque'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import MailOutlineIcon from '@mui/icons-material/MailOutline'
@@ -22,6 +23,22 @@ function Register() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [signupBg, setSignupBg] = useState(null)
+
+  useEffect(() => {
+    const loadSignupImage = async () => {
+      try {
+        const assets = await assetService.getAssetsByType('signup')
+        if (assets && assets.length > 0) {
+          setSignupBg(assets[0].imageUrl)
+        }
+      } catch (err) {
+        console.error('Error loading signup background asset:', err)
+      }
+    }
+
+    loadSignupImage()
+  }, [])
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -55,7 +72,7 @@ function Register() {
           <div className='relative hidden h-screen w-full lg:block lg:w-1/2'>
             <div className='absolute inset-0 bg-primary/45'></div>
             <img
-              src='https://images.unsplash.com/photo-1572252009286-268acec5ca0a?q=80&w=1600&auto=format&fit=crop'
+              src={signupBg || 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?q=80&w=1600&auto=format&fit=crop'}
               alt='Sacred journey background'
               className='h-full w-full object-cover'
             />

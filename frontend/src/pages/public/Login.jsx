@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import authService from '../../services/authService'
+import assetService from '../../services/assetService'
 import MosqueIcon from '@mui/icons-material/Mosque'
 import MailOutlineIcon from '@mui/icons-material/MailOutline'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
@@ -17,6 +18,22 @@ function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [loginBg, setLoginBg] = useState(null)
+
+  useEffect(() => {
+    const loadLoginImage = async () => {
+      try {
+        const assets = await assetService.getAssetsByType('login')
+        if (assets && assets.length > 0) {
+          setLoginBg(assets[0].imageUrl)
+        }
+      } catch (err) {
+        console.error('Error loading login background asset:', err)
+      }
+    }
+
+    loadLoginImage()
+  }, [])
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -62,7 +79,7 @@ function Login() {
           <div className='relative hidden h-screen w-full lg:block lg:w-1/2'>
             <div className='absolute inset-0 bg-primary/45'></div>
             <img
-              src='https://lh3.googleusercontent.com/aida-public/AB6AXuDy6wVOoUgdIV9o4kzL4ITOXjcqcn7kV5ZNECIu4o2ERBiYLH-wn5ymNG6PwIUxTtZ22vLHG2yk4GpmfEQc8CF5mWPtblUDt_yV1Q7JArF0EZ0ToVOgQGvhrO68aKZtBOKWi185_aaP2dfQN4aX0Lr2aqUMjuQjH_x324lGYLA8mgQMMb_A_N0j1uAiWzoNw5qYOn5Fvu8D7EN6i8m---dc3ltLbSAG3BTbCizdKdqAIrRH6ADZV2Loc459kwO9kTNVZQ6H_5inkVLo'
+              src={loginBg || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDy6wVOoUgdIV9o4kzL4ITOXjcqcn7kV5ZNECIu4o2ERBiYLH-wn5ymNG6PwIUxTtZ22vLHG2yk4GpmfEQc8CF5mWPtblUDt_yV1Q7F0EZ0ToVOgQGvhrO68aKZtBOKWi185_aaP2dfQN4aX0Lr2aqUMjuQjH_x324lGYLA8mgQMMb_A_N0j1uAiWzoNw5qYOn5Fvu8D7EN6i8m---dc3ltLbSAG3BTbCizdKdqAIrRH6ADZV2Loc459kwO9kTNVZQ6H_5inkVLo'}
               alt='Masjid view'
               className='h-full w-full object-cover'
             />

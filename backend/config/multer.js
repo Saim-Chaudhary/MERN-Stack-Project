@@ -7,9 +7,9 @@ const storage = new CloudinaryStorage({
     cloudinary,
 
     params: async (req, file) => ({
-        folder: 'KAT/documents',
+        folder: `KAT/assets/${req.body.assetType || 'general'}`,
         resource_type: 'auto',
-        public_id: `document_${Date.now()}`,
+        public_id: `${req.body.assetType || 'asset'}_${Date.now()}`,
     }),
 
 });

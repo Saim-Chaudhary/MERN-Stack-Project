@@ -23,11 +23,16 @@ const documentTypeRoutes = require("./routes/documentTypeRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const expenseCategoryRoutes = require("./routes/expenseCategoryRoutes");
 const seasonalPriceRoutes = require("./routes/seasonalPriceRoutes");
+const companySettingsRoutes = require("./routes/companySettingsRoutes");
+const assetRoutes = require("./routes/assetRoutes");
+const financeRoutes = require("./routes/financeRoutes");
 
 const app = express();
 
 const defaultAllowedOrigins = [
   "http://localhost:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
   "http://localhost:5173",
   "https://mern-stack-project-three-vert.vercel.app"
 ];
@@ -101,6 +106,9 @@ app.use("/api/document-types", documentTypeRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/expense-categories", expenseCategoryRoutes);
 app.use("/api/seasonal-prices", seasonalPriceRoutes);
+app.use("/api/company-settings", companySettingsRoutes);
+app.use("/api/assets", assetRoutes);
+app.use("/api/finance", financeRoutes);
 
 // Global error handler - must be at the very bottom after all routes
 app.use(errorMiddleware);

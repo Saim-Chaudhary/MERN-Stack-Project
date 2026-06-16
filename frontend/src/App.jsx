@@ -39,6 +39,9 @@ import SeasonalPricesManagement from './pages/admin/SeasonalPricesManagement';
 import ExpenseCategoriesManagement from './pages/admin/ExpenseCategoriesManagement';
 import ExpensesManagement from './pages/admin/ExpensesManagement';
 import PassengersManagement from './pages/admin/PassengersManagement';
+import CompanySettingsManagement from './pages/admin/CompanySettingsManagement';
+import AssetManagement from './pages/admin/AssetManagement';
+import FinanceDashboard from './pages/admin/FinanceDashboard';
 import EmployeesManagement from './pages/admin/EmployeesManagement';
 import PaymentSuccess from './pages/customer/PaymentSuccess';
 
@@ -92,6 +95,9 @@ function App(){
                     <Route path='/admin/passengers' element={<PassengersManagement />} />
                     <Route path='/admin/employees' element={<EmployeesManagement />} />
                     <Route path='/admin/profile' element={<Profile />} />
+                    <Route path='/admin/company-settings' element={<CompanySettingsManagement />} />
+                    <Route path='/admin/assets' element={<AssetManagement />} />
+                    <Route path='/admin/finance' element={<FinanceDashboard />} />
                 </Route>
             </Routes>
         </>

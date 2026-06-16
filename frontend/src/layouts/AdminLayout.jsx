@@ -17,6 +17,9 @@ import EventIcon from '@mui/icons-material/Event'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
+import SettingsIcon from '@mui/icons-material/Settings'
+import ImageIcon from '@mui/icons-material/Image'
+import AnalyticsIcon from '@mui/icons-material/Analytics'
 import BadgeIcon from '@mui/icons-material/Badge'
 import authService from '../services/authService'
 
@@ -288,26 +291,42 @@ function AdminLayout() {
                             Profile
                         </Link>
 
-                        {backendReadyModules.length > 0 && (
-                            <>
-                                <div className='mt-4 px-4 text-xs font-semibold uppercase tracking-wide text-slate-400'>
-                                    Backend Ready Modules
-                                </div>
+                        <div className='mt-4 px-4 text-xs font-semibold uppercase tracking-wide text-slate-400'>
+                            Management
+                        </div>
 
-                                {backendReadyModules.map((item) => (
-                                    <div
-                                        key={item.name}
-                                        className='flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-400'
-                                    >
-                                        {item.icon}
-                                        <span>{item.name}</span>
-                                        <span className='ml-auto rounded-md bg-white/10 px-2 py-0.5 text-[10px] uppercase text-slate-300'>
-                                            soon
-                                        </span>
-                                    </div>
-                                ))}
-                            </>
-                        )}
+                        <Link
+                            to='/admin/company-settings'
+                            onClick={() => setSidebarOpen(false)}
+                            className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                                isActive('/admin/company-settings') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            }`}
+                        >
+                            <SettingsIcon fontSize='small' />
+                            Company Settings
+                        </Link>
+
+                        <Link
+                            to='/admin/assets'
+                            onClick={() => setSidebarOpen(false)}
+                            className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                                isActive('/admin/assets') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            }`}
+                        >
+                            <ImageIcon fontSize='small' />
+                            Assets
+                        </Link>
+
+                        <Link
+                            to='/admin/finance'
+                            onClick={() => setSidebarOpen(false)}
+                            className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                                isActive('/admin/finance') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            }`}
+                        >
+                            <AnalyticsIcon fontSize='small' />
+                            Finance Dashboard
+                        </Link>
                     </nav>
 
                     <div className='border-t border-white/10 px-3 py-4'>

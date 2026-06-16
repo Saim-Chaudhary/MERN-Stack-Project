@@ -1,14 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import assetService from '../../services/assetService'
 import heroImg from '../../assets/unnamed.png'
 
 function HeroSection() {
+  const [heroImage, setHeroImage] = useState(null)
+
+  useEffect(() => {
+    const loadHeroImage = async () => {
+      try {
+        const assets = await assetService.getAssetsByType('hero')
+        if (assets && assets.length > 0) {
+          setHeroImage(assets[0].imageUrl)
+        }
+      } catch (error) {
+        console.error('Failed to load hero image asset:', error)
+      }
+    }
+
+    loadHeroImage()
+  }, [])
+
   return (
     <>
       <section className='relative min-h-[88vh] overflow-hidden'>
         <div
           className='absolute inset-0 bg-cover bg-center'
-          style={{ backgroundImage: `url(${heroImg})` }}
+          style={{ backgroundImage: `url(${heroImage || heroImg})` }}
         ></div>
         <div className='absolute inset-0 bg-primary/60'></div>
 
