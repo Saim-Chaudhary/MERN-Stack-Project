@@ -19,10 +19,14 @@ function AdminDashboard() {
     totalBookings: 0,
     pendingBookings: 0,
     confirmedBookings: 0,
+    cancelledBookings: 0,
     totalPackages: 0,
     totalContacts: 0,
     totalCustomRequests: 0,
     totalEmployees: 0,
+    totalRevenue: 0,
+    totalExpenses: 0,
+    netProfit: 0,
   })
 
   const userName = localStorage.getItem('userName') || 'Admin'
@@ -39,17 +43,31 @@ function AdminDashboard() {
   }
 
   const buildStats = ({ bookings, packages, contacts, customRequests, users }) => {
-    const employees = users.filter((user) => user.role === 'admin')
+    const employees = users.filter((user) => user.role === 'admin' || user.role === 'employee')
 
     return {
       totalBookings: bookings.length,
       pendingBookings: countByStatus(bookings, 'Pending'),
       confirmedBookings: countByStatus(bookings, 'Confirmed'),
+      cancelledBookings: countByStatus(bookings, 'Cancelled'),
       totalPackages: packages.length,
       totalContacts: contacts.length,
       totalCustomRequests: customRequests.length,
       totalEmployees: employees.length,
+      totalRevenue: 0,
+      totalExpenses: 0,
+      netProfit: 0,
     }
+  }
+
+  const sumCompletedPayments = (payments) => {
+    return payments
+      .filter((payment) => payment.paymentStatus === 'Completed')
+      .reduce((total, payment) => total + Number(payment.amount || 0), 0)
+  }
+
+  const sumExpenses = (expenses) => {
+    return expenses.reduce((total, expense) => total + Number(expense.amount || 0), 0)
   }
 
   useEffect(() => {
@@ -60,12 +78,14 @@ function AdminDashboard() {
 
         const authHeaders = getAuthHeaders()
 
-        const [bookingsRes, packagesRes, contactsRes, customRequestsRes, usersRes] = await Promise.all([
+        const [bookingsRes, packagesRes, contactsRes, customRequestsRes, usersRes, paymentsRes, expensesRes] = await Promise.all([
           axios.get('/api/bookings', authHeaders),
           axios.get('/api/packages/all'),
           axios.get('/api/contacts', authHeaders),
           axios.get('/api/custom-requests', authHeaders),
           axios.get('/api/auth/users', authHeaders),
+          axios.get('/api/payments', authHeaders),
+          axios.get('/api/expenses', authHeaders),
         ])
 
         const bookings = bookingsRes.data?.data || []
@@ -73,9 +93,19 @@ function AdminDashboard() {
         const contacts = contactsRes.data?.data || []
         const customRequests = customRequestsRes.data?.data || []
         const users = usersRes.data?.data || []
+        const payments = paymentsRes.data?.data || []
+        const expenses = expensesRes.data?.data || []
 
         const nextStats = buildStats({ bookings, packages, contacts, customRequests, users })
-        setStats(nextStats)
+        const totalRevenue = sumCompletedPayments(payments)
+        const totalExpenses = sumExpenses(expenses)
+
+        setStats({
+          ...nextStats,
+          totalRevenue,
+          totalExpenses,
+          netProfit: totalRevenue - totalExpenses,
+        })
       } catch (err) {
         console.error(err)
         setError('Failed to load admin dashboard data')
@@ -103,13 +133,13 @@ function AdminDashboard() {
       </div>
 
       {loading ? (
-        <div className='grid grid-cols-2 gap-4 md:grid-cols-3'>
-          {[...Array(6)].map((_, i) => (
+        <div className='grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4'>
+          {[...Array(11)].map((_, i) => (
             <div key={i} className='h-28 animate-pulse rounded-2xl bg-slate-100' />
           ))}
         </div>
       ) : (
-        <div className='grid grid-cols-2 gap-4 md:grid-cols-3'>
+        <div className='grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4'>
           <div className='rounded-2xl border border-slate-100 bg-white p-5 shadow-soft'>
             <div className='mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white'>
               <BookOnlineIcon fontSize='small' />
@@ -164,6 +194,38 @@ function AdminDashboard() {
             </div>
             <p className='text-2xl font-bold text-slate-800'>{stats.totalEmployees}</p>
             <p className='mt-0.5 text-xs font-medium text-slate-500'>Employees</p>
+          </div>
+
+          <div className='rounded-2xl border border-slate-100 bg-white p-5 shadow-soft'>
+            <div className='mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-white'>
+              <span className='text-sm font-bold'>R</span>
+            </div>
+            <p className='text-2xl font-bold text-slate-800'>PKR {stats.totalRevenue.toLocaleString()}</p>
+            <p className='mt-0.5 text-xs font-medium text-slate-500'>Total Revenue</p>
+          </div>
+
+          <div className='rounded-2xl border border-slate-100 bg-white p-5 shadow-soft'>
+            <div className='mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500 text-white'>
+              <span className='text-sm font-bold'>E</span>
+            </div>
+            <p className='text-2xl font-bold text-slate-800'>PKR {stats.totalExpenses.toLocaleString()}</p>
+            <p className='mt-0.5 text-xs font-medium text-slate-500'>Total Expenses</p>
+          </div>
+
+          <div className='rounded-2xl border border-slate-100 bg-white p-5 shadow-soft'>
+            <div className='mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500 text-white'>
+              <span className='text-sm font-bold'>N</span>
+            </div>
+            <p className='text-2xl font-bold text-slate-800'>PKR {stats.netProfit.toLocaleString()}</p>
+            <p className='mt-0.5 text-xs font-medium text-slate-500'>Net Profit</p>
+          </div>
+
+          <div className='rounded-2xl border border-slate-100 bg-white p-5 shadow-soft'>
+            <div className='mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-700 text-white'>
+              <span className='text-sm font-bold'>C</span>
+            </div>
+            <p className='text-2xl font-bold text-slate-800'>{stats.cancelledBookings}</p>
+            <p className='mt-0.5 text-xs font-medium text-slate-500'>Cancelled Bookings</p>
           </div>
         </div>
       )}

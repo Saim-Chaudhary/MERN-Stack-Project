@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import MosqueIcon from '@mui/icons-material/Mosque';
 import { Link, useNavigate } from 'react-router-dom';
+import authService from '../../services/authService'
 
 
 function Navbar() {
@@ -12,12 +13,18 @@ function Navbar() {
     const isLoggedIn = Boolean(token)
     const dashboardPath = userRole === 'admin' ? '/admin/dashboard' : '/customer/dashboard'
 
-    const handleLogout = () => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('userRole')
-        localStorage.removeItem('userName')
-        setIsMenuOpen(false)
-        navigate('/')
+    const handleLogout = async () => {
+        try {
+            await authService.logout()
+        } catch (error) {
+            console.log(error)
+        } finally {
+            localStorage.removeItem('token')
+            localStorage.removeItem('userRole')
+            localStorage.removeItem('userName')
+            setIsMenuOpen(false)
+            navigate('/')
+        }
     }
 
     const navLinks = [

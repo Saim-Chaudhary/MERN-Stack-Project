@@ -4,6 +4,7 @@ import axios from 'axios'
 const initialFormData = {
   title: '',
   description: '',
+  imageUrl: '',
   basePrice: '',
   duration: '',
   transportType: 'Sharing',
@@ -24,6 +25,11 @@ function PackagesManagement() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState(initialFormData)
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [editingPackageId, setEditingPackageId] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 8
 
   const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -31,13 +37,53 @@ function PackagesManagement() {
 
   const resetForm = () => {
     setFormData(initialFormData)
+    setSelectedImage(null)
+    setEditingPackageId('')
   }
 
-  const getCreatePayload = () => ({
-    ...formData,
-    basePrice: Number(formData.basePrice),
-    duration: formData.duration ? Number(formData.duration) : undefined,
-  })
+  const fillFormForEdit = (item) => {
+    setEditingPackageId(item._id)
+    setFormData({
+      title: item.title || '',
+      description: item.description || '',
+      imageUrl: item.imageUrl || '',
+      basePrice: item.basePrice ?? '',
+      duration: item.duration ?? '',
+      transportType: item.transportType || 'Sharing',
+      airline: item.airline?._id || '',
+      hotels: item.hotels?.map((hotel) => hotel._id || hotel) || [],
+      includedServices: item.includedServices?.map((service) => service._id || service) || [],
+      departureDate: item.departureDate ? String(item.departureDate).slice(0, 10) : '',
+      returnDate: item.returnDate ? String(item.returnDate).slice(0, 10) : '',
+      cancellationPolicy: item.cancellationPolicy || '',
+      isActive: Boolean(item.isActive),
+    })
+    setSelectedImage(null)
+  }
+
+  const buildFormData = () => {
+    const payload = new FormData()
+
+    payload.append('title', formData.title)
+    payload.append('description', formData.description)
+    payload.append('imageUrl', formData.imageUrl || '')
+    payload.append('basePrice', String(formData.basePrice))
+    payload.append('duration', String(formData.duration || ''))
+    payload.append('transportType', formData.transportType)
+    payload.append('airline', formData.airline || '')
+    payload.append('hotels', JSON.stringify(formData.hotels || []))
+    payload.append('includedServices', JSON.stringify(formData.includedServices || []))
+    payload.append('departureDate', formData.departureDate || '')
+    payload.append('returnDate', formData.returnDate || '')
+    payload.append('cancellationPolicy', formData.cancellationPolicy || '')
+    payload.append('isActive', String(formData.isActive))
+
+    if (selectedImage) {
+      payload.append('image', selectedImage)
+    }
+
+    return payload
+  }
 
   const fetchData = async () => {
     try {
@@ -73,6 +119,11 @@ function PackagesManagement() {
     setFormData((prev) => ({ ...prev, [name]: nextValue }))
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0] || null
+    setSelectedImage(file)
+  }
+
   const handleMultiToggle = (field, id) => {
     const currentValues = formData[field] || []
     const nextValues = currentValues.includes(id)
@@ -90,50 +141,24 @@ function PackagesManagement() {
     }
 
     try {
-      const payload = getCreatePayload()
-      await axios.post('/api/packages/create', payload, getAuthHeaders())
+      const payload = buildFormData()
+
+      if (editingPackageId) {
+        await axios.put(`/api/packages/${editingPackageId}`, payload, getAuthHeaders())
+      } else {
+        await axios.post('/api/packages/create', payload, getAuthHeaders())
+      }
 
       resetForm()
       fetchData()
     } catch (err) {
       console.error(err)
-      setError('Failed to create package')
+      setError(editingPackageId ? 'Failed to update package' : 'Failed to create package')
     }
   }
 
   const editPackage = async (item) => {
-    const title = window.prompt('Package title:', item.title || '')
-    if (!title) return
-
-    const basePriceInput = window.prompt('Base price:', item.basePrice || 0)
-    if (!basePriceInput) return
-
-    const durationInput = window.prompt('Duration (days):', item.duration || '')
-    if (durationInput === null) return
-
-    const transportType = window.prompt('Transport type (Sharing/Private/VIP):', item.transportType || 'Sharing')
-    if (!transportType) return
-
-    const activeInput = window.prompt('Active package? (yes/no):', item.isActive ? 'yes' : 'no')
-    if (!activeInput) return
-
-    try {
-      await axios.put(
-        `/api/packages/${item._id}`,
-        {
-          title,
-          basePrice: Number(basePriceInput),
-          duration: durationInput ? Number(durationInput) : undefined,
-          transportType,
-          isActive: activeInput.toLowerCase() === 'yes',
-        },
-        getAuthHeaders()
-      )
-      fetchData()
-    } catch (err) {
-      console.error(err)
-      setError('Failed to update package')
-    }
+    fillFormForEdit(item)
   }
 
   const deletePackage = async (id) => {
@@ -145,6 +170,18 @@ function PackagesManagement() {
       setError('Failed to delete package')
     }
   }
+
+  const filteredPackages = packages.filter((item) => {
+    const query = searchTerm.trim().toLowerCase()
+    if (!query) return true
+
+    return [item.title, item.description, item.transportType, item.airline?.name, item.cancellationPolicy]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query))
+  })
+
+  const totalPages = Math.max(1, Math.ceil(filteredPackages.length / pageSize))
+  const paginatedPackages = filteredPackages.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   return (
     <div className='space-y-6'>
@@ -177,6 +214,16 @@ function PackagesManagement() {
           </label>
           <input name='departureDate' type='date' value={formData.departureDate} onChange={handleChange} className='rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
           <input name='returnDate' type='date' value={formData.returnDate} onChange={handleChange} className='rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
+        </div>
+
+        <div className='grid gap-4 md:grid-cols-2'>
+          <input type='file' accept='image/*' onChange={handleImageChange} className='rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
+          {formData.imageUrl && (
+            <div className='flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2'>
+              <img src={formData.imageUrl} alt='Selected package' className='h-12 w-12 rounded-lg object-cover' />
+              <div className='text-xs text-slate-600'>Existing image will stay unless you choose a new one.</div>
+            </div>
+          )}
         </div>
 
         <textarea name='description' value={formData.description} onChange={handleChange} placeholder='Description' rows={3} className='w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
@@ -214,19 +261,29 @@ function PackagesManagement() {
           </div>
         </div>
 
-        <button type='submit' className='rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90'>
-          Add Package
-        </button>
+        <div className='flex flex-wrap gap-3'>
+          <button type='submit' className='rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90'>
+            {editingPackageId ? 'Update Package' : 'Add Package'}
+          </button>
+          {editingPackageId && (
+            <button type='button' onClick={resetForm} className='rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50'>
+              Cancel Edit
+            </button>
+          )}
+        </div>
       </form>
 
       <div className='rounded-2xl border border-slate-100 bg-white shadow-soft'>
         <div className='border-b border-slate-100 px-6 py-4'>
-          <h2 className='font-semibold text-slate-800'>All Packages</h2>
+          <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+            <h2 className='font-semibold text-slate-800'>All Packages</h2>
+            <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }} placeholder='Search packages' className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary sm:max-w-xs' />
+          </div>
         </div>
 
         {loading ? (
           <div className='p-6 text-sm text-slate-500'>Loading packages...</div>
-        ) : packages.length === 0 ? (
+        ) : paginatedPackages.length === 0 ? (
           <div className='p-6 text-sm text-slate-500'>No packages found.</div>
         ) : (
           <div className='overflow-x-auto'>
@@ -242,7 +299,7 @@ function PackagesManagement() {
                 </tr>
               </thead>
               <tbody>
-                {packages.map((item) => (
+                {paginatedPackages.map((item) => (
                   <tr key={item._id} className='border-t border-slate-100'>
                     <td className='px-4 py-3 font-medium text-slate-800'>{item.title}</td>
                     <td className='px-4 py-3 text-slate-600'>PKR {item.basePrice || 0}</td>
@@ -263,6 +320,11 @@ function PackagesManagement() {
                 ))}
               </tbody>
             </table>
+            <div className='flex items-center justify-between border-t border-slate-100 px-4 py-3 text-sm text-slate-600'>
+              <button type='button' disabled={currentPage === 1} onClick={() => setCurrentPage((page) => Math.max(1, page - 1))} className='rounded-lg border border-slate-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'>Previous</button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button type='button' disabled={currentPage === totalPages} onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))} className='rounded-lg border border-slate-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'>Next</button>
+            </div>
           </div>
         )}
       </div>

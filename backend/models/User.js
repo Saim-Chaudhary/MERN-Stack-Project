@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   address: String,
   role: {
     type: String,
-    enum: ["admin", "customer"],
+    enum: ["admin", "employee", "customer"],
     default: "customer"
   }
 }, { timestamps: true });

@@ -2,6 +2,7 @@ const userModel = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const { createSession, destroySession, getSessionIdFromRequest, getSessionCookieName, getSessionCookieOptions } = require('../utils/authSession');
 
 dotenv.config();
 
@@ -87,6 +88,15 @@ const loginUser = async (req, res) => {
         }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRE || "6h"
         });
+
+        const session = await createSession({
+            id: checkUser._id,
+            role: checkUser.role,
+            fullName: checkUser.fullName,
+            email: checkUser.email
+        });
+
+        res.cookie(getSessionCookieName(), session.sessionId, getSessionCookieOptions());
 
         res.status(200).json({
             message: "Login successful",
@@ -191,9 +201,9 @@ const updateUserRoleAdmin = async (req, res) => {
         const { id } = req.params;
         const { role } = req.body;
 
-        if (!role || !['admin', 'customer'].includes(role)) {
+        if (!role || !['admin', 'employee', 'customer'].includes(role)) {
             return res.status(400).json({
-                message: "Role must be either admin or customer"
+                message: "Role must be admin, employee, or customer"
             });
         }
 
@@ -286,6 +296,19 @@ const deleteUserAdmin = async (req, res) => {
     }
 };
 
+const logoutUser = async (req, res) => {
+    try {
+        const sessionId = getSessionIdFromRequest(req);
+        await destroySession(sessionId);
+        res.clearCookie(getSessionCookieName(), getSessionCookieOptions());
+
+        return res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 module.exports = {
     registerUser,
     loginUser,
@@ -294,5 +317,6 @@ module.exports = {
     getAllUsersAdmin,
     updateUserAdmin,
     updateUserRoleAdmin,
-    deleteUserAdmin
-}
+    deleteUserAdmin,
+    logoutUser
+};

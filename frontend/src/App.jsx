@@ -40,6 +40,7 @@ import ExpenseCategoriesManagement from './pages/admin/ExpenseCategoriesManageme
 import ExpensesManagement from './pages/admin/ExpensesManagement';
 import PassengersManagement from './pages/admin/PassengersManagement';
 import EmployeesManagement from './pages/admin/EmployeesManagement';
+import PaymentSuccess from './pages/customer/PaymentSuccess';
 
 
 function App(){
@@ -66,6 +67,7 @@ function App(){
                     <Route path="/customer/assigned-agent" element={<AssignedAgent />} />
                     <Route path="/customer/custom-requests" element={<CustomRequests />} />
                     <Route path="/customer/testimonials" element={<CustomerTestimonials />} />
+                    <Route path="/customer/payments/success" element={<PaymentSuccess />} />
                     <Route path="/customer/profile" element={<CustomerProfile />} />
                 </Route>
 

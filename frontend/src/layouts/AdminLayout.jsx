@@ -18,6 +18,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
 import BadgeIcon from '@mui/icons-material/Badge'
+import authService from '../services/authService'
 
 function AdminLayout() {
     const location = useLocation()
@@ -33,11 +34,17 @@ function AdminLayout() {
     // These modules exist in backend admin APIs but pages are not built yet.
     const backendReadyModules = []
 
-    const handleLogout = () => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('userRole')
-        localStorage.removeItem('userName')
-        navigate('/')
+    const handleLogout = async () => {
+        try {
+            await authService.logout()
+        } catch (error) {
+            console.log(error)
+        } finally {
+            localStorage.removeItem('token')
+            localStorage.removeItem('userRole')
+            localStorage.removeItem('userName')
+            navigate('/')
+        }
     }
 
     return (

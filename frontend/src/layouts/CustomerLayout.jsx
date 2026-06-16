@@ -9,6 +9,7 @@ import RequestPageIcon from '@mui/icons-material/RequestPage'
 import ReviewsIcon from '@mui/icons-material/Reviews'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
+import authService from '../services/authService'
 
 function CustomerLayout() {
 
@@ -22,11 +23,17 @@ function CustomerLayout() {
     return location.pathname.startsWith(path)
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('userRole')
-    localStorage.removeItem('userName')
-    navigate('/')
+  const handleLogout = async () => {
+    try {
+      await authService.logout()
+    } catch (error) {
+      console.log(error)
+    } finally {
+      localStorage.removeItem('token')
+      localStorage.removeItem('userRole')
+      localStorage.removeItem('userName')
+      navigate('/')
+    }
   }
 
   return (

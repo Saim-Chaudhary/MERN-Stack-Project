@@ -8,6 +8,10 @@ function ServicesManagement() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState(initialFormData)
+  const [editingServiceId, setEditingServiceId] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 8
 
   const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -15,6 +19,7 @@ function ServicesManagement() {
 
   const resetForm = () => {
     setFormData(initialFormData)
+    setEditingServiceId('')
   }
 
   const fetchServices = async () => {
@@ -48,14 +53,36 @@ function ServicesManagement() {
     }
 
     try {
-      await axios.post('/api/services/create', formData, getAuthHeaders())
+      if (editingServiceId) {
+        await axios.put(`/api/services/${editingServiceId}`, formData, getAuthHeaders())
+      } else {
+        await axios.post('/api/services/create', formData, getAuthHeaders())
+      }
       resetForm()
       fetchServices()
     } catch (err) {
       console.error(err)
-      setError('Failed to create service')
+      setError(editingServiceId ? 'Failed to update service' : 'Failed to create service')
     }
   }
+
+  const editService = (item) => {
+    setEditingServiceId(item._id)
+    setFormData({
+      name: item.name || '',
+      description: item.description || '',
+      category: item.category || 'Other',
+    })
+  }
+
+  const filteredServices = services.filter((item) => {
+    const query = searchTerm.trim().toLowerCase()
+    if (!query) return true
+    return [item.name, item.category, item.description].filter(Boolean).some((value) => String(value).toLowerCase().includes(query))
+  })
+
+  const totalPages = Math.max(1, Math.ceil(filteredServices.length / pageSize))
+  const paginatedServices = filteredServices.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   const deleteService = async (id) => {
     try {
@@ -88,14 +115,24 @@ function ServicesManagement() {
           <option>Insurance</option>
           <option>Other</option>
         </select>
-        <button type='submit' className='rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 md:col-span-4'>
-          Add Service
-        </button>
+        <div className='flex flex-wrap gap-3 md:col-span-4'>
+          <button type='submit' className='rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90'>
+            {editingServiceId ? 'Update Service' : 'Add Service'}
+          </button>
+          {editingServiceId && (
+            <button type='button' onClick={resetForm} className='rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50'>
+              Cancel Edit
+            </button>
+          )}
+        </div>
       </form>
 
       <div className='rounded-2xl border border-slate-100 bg-white shadow-soft'>
         <div className='border-b border-slate-100 px-6 py-4'>
-          <h2 className='font-semibold text-slate-800'>All Services</h2>
+          <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+            <h2 className='font-semibold text-slate-800'>All Services</h2>
+            <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }} placeholder='Search services' className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary sm:max-w-xs' />
+          </div>
         </div>
 
         {loading ? (
@@ -114,18 +151,26 @@ function ServicesManagement() {
                 </tr>
               </thead>
               <tbody>
-                {services.map((item) => (
+                {paginatedServices.map((item) => (
                   <tr key={item._id} className='border-t border-slate-100'>
                     <td className='px-4 py-3 font-medium text-slate-800'>{item.name}</td>
                     <td className='px-4 py-3 text-slate-600'>{item.category || '-'}</td>
                     <td className='px-4 py-3 text-slate-600'>{item.description || '-'}</td>
                     <td className='px-4 py-3'>
-                      <button onClick={() => deleteService(item._id)} className='rounded-lg bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700'>Delete</button>
+                      <div className='flex flex-wrap gap-2'>
+                        <button onClick={() => editService(item)} className='rounded-lg bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700'>Edit</button>
+                        <button onClick={() => deleteService(item._id)} className='rounded-lg bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700'>Delete</button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <div className='flex items-center justify-between border-t border-slate-100 px-4 py-3 text-sm text-slate-600'>
+              <button type='button' disabled={currentPage === 1} onClick={() => setCurrentPage((page) => Math.max(1, page - 1))} className='rounded-lg border border-slate-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'>Previous</button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button type='button' disabled={currentPage === totalPages} onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))} className='rounded-lg border border-slate-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'>Next</button>
+            </div>
           </div>
         )}
       </div>

@@ -13,6 +13,8 @@ const passengerSchema = new mongoose.Schema({
     enum: ["Adult", "Child", "Infant"],
     required: true
   },
+  passportExpiry: Date,
+  dateOfBirth: Date,
   passportNumber: String,
   nationality: String,
   gender: {

@@ -4,11 +4,19 @@ const bookingSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   package: { type: mongoose.Schema.Types.ObjectId, ref: "Package" },
 
+  travelDate: Date,
+  notes: String,
+
   numberOfAdults: Number,
   numberOfChildren: Number,
   numberOfInfants: Number,
 
   totalPrice: Number,
+
+  amountPaid: {
+    type: Number,
+    default: 0
+  },
 
   assignedGuide: {
     type: mongoose.Schema.Types.ObjectId,

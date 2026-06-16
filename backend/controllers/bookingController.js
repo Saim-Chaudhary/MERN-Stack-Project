@@ -1,11 +1,10 @@
 const Booking = require('../models/Booking');
 const User = require('../models/User');
 const Guide = require('../models/Guide');
-const Passenger = require('../models/Passenger');
 
 const createBooking = async (req, res) => {
     try {
-        const { package: packageId, numberOfAdults, numberOfChildren, numberOfInfants, totalPrice } = req.body;
+        const { package: packageId, user, travelDate, notes, numberOfAdults, numberOfChildren, numberOfInfants, totalPrice } = req.body;
 
         if (!packageId || !numberOfAdults || !totalPrice) {
             return res.status(400).json({
@@ -14,49 +13,15 @@ const createBooking = async (req, res) => {
         }
 
         const newBooking = await Booking.create({
-            user: req.user.id,
+            user: user || req.user.id,
             package: packageId,
+            travelDate,
+            notes,
             numberOfAdults,
             numberOfChildren,
             numberOfInfants,
             totalPrice
         });
-
-        const defaultPassengers = [];
-        const adults = Number(numberOfAdults || 0);
-        const children = Number(numberOfChildren || 0);
-        const infants = Number(numberOfInfants || 0);
-
-        for (let i = 1; i <= adults; i++) {
-            defaultPassengers.push({
-                booking: newBooking._id,
-                fullName: `Adult Passenger ${i}`,
-                age: 30,
-                passengerType: 'Adult'
-            });
-        }
-
-        for (let i = 1; i <= children; i++) {
-            defaultPassengers.push({
-                booking: newBooking._id,
-                fullName: `Child Passenger ${i}`,
-                age: 10,
-                passengerType: 'Child'
-            });
-        }
-
-        for (let i = 1; i <= infants; i++) {
-            defaultPassengers.push({
-                booking: newBooking._id,
-                fullName: `Infant Passenger ${i}`,
-                age: 1,
-                passengerType: 'Infant'
-            });
-        }
-
-        if (defaultPassengers.length > 0) {
-            await Passenger.insertMany(defaultPassengers);
-        }
 
         return res.status(201).json({
             message: "Booking created successfully",
@@ -151,9 +116,23 @@ const updateBookingStatus = async (req, res) => {
         const bookingId = req.params.id;
         const { status, paymentStatus, assignedGuide } = req.body;
 
+        const updateData = {};
+
+        if (status !== undefined) {
+            updateData.status = status;
+        }
+
+        if (paymentStatus !== undefined) {
+            updateData.paymentStatus = paymentStatus;
+        }
+
+        if (assignedGuide !== undefined) {
+            updateData.assignedGuide = assignedGuide;
+        }
+
         const updatedBooking = await Booking.findByIdAndUpdate(
             bookingId,
-            { status, paymentStatus, assignedGuide },
+            { $set: updateData },
             { new: true }
         );
 

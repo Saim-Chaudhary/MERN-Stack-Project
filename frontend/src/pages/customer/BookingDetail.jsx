@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useSearchParams } from 'react-router-dom'
 import bookingService from '../../services/bookingService'
+import paymentService from '../../services/paymentService'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import FlightIcon from '@mui/icons-material/Flight'
 import HotelIcon from '@mui/icons-material/Hotel'
+import PaymentIcon from '@mui/icons-material/Payment'
 
 function DetailRow({ label, value }) {
   return (
@@ -16,9 +18,12 @@ function DetailRow({ label, value }) {
 
 function BookingDetail() {
   const { id } = useParams()
+  const [searchParams] = useSearchParams()
   const [booking, setBooking] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [payLoading, setPayLoading] = useState('')
+  const [payError, setPayError] = useState('')
 
   useEffect(() => {
     const fetchBooking = async () => {
@@ -33,6 +38,20 @@ function BookingDetail() {
     }
     fetchBooking()
   }, [id])
+
+  const handlePay = async (type) => {
+    setPayError('')
+    setPayLoading(type)
+    try {
+      const res = await paymentService.createCheckoutSession(id, type)
+      if (res.url) {
+        window.location.href = res.url
+      }
+    } catch (err) {
+      setPayError(err.response?.data?.message || 'Could not start payment')
+      setPayLoading('')
+    }
+  }
 
   if (loading) {
     return (
@@ -138,6 +157,64 @@ function BookingDetail() {
           </div>
         )}
       </div>
+
+      {/* Payment Section */}
+      {booking.paymentStatus !== 'Paid' && (
+        <div className='rounded-2xl border border-slate-100 bg-white p-6 shadow-soft'>
+          <h2 className='mb-1 font-semibold text-slate-800'>Make a Payment</h2>
+          <p className='mb-4 text-sm text-slate-500'>
+            Total: PKR {booking.totalPrice?.toLocaleString()} · Paid so far: PKR {Number(booking.amountPaid || 0).toLocaleString()}
+          </p>
+
+          {searchParams.get('payment') === 'cancelled' && (
+            <p className='mb-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-700'>
+              Payment was cancelled. You can try again below.
+            </p>
+          )}
+
+          {payError && (
+            <p className='mb-3 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600'>{payError}</p>
+          )}
+
+          <div className='flex flex-wrap gap-3'>
+            {Number(booking.amountPaid || 0) === 0 && (
+              <>
+                <button
+                  onClick={() => handlePay('full')}
+                  disabled={!!payLoading}
+                  className='inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-60'
+                >
+                  <PaymentIcon fontSize='small' />
+                  {payLoading === 'full' ? 'Redirecting…' : 'Pay Full Amount'}
+                </button>
+                <button
+                  onClick={() => handlePay('deposit')}
+                  disabled={!!payLoading}
+                  className='inline-flex items-center gap-2 rounded-xl border border-primary px-5 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 disabled:opacity-60'
+                >
+                  <PaymentIcon fontSize='small' />
+                  {payLoading === 'deposit'
+                    ? 'Redirecting…'
+                    : `Pay 30% Deposit (PKR ${(booking.totalPrice * 0.3).toLocaleString()})`}
+                </button>
+              </>
+            )}
+
+            {Number(booking.amountPaid || 0) > 0 && Number(booking.amountPaid) < Number(booking.totalPrice) && (
+              <button
+                onClick={() => handlePay('remaining')}
+                disabled={!!payLoading}
+                className='inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-60'
+              >
+                <PaymentIcon fontSize='small' />
+                {payLoading === 'remaining'
+                  ? 'Redirecting…'
+                  : `Pay Remaining 70% (PKR ${(booking.totalPrice - booking.amountPaid).toLocaleString()})`}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className='rounded-xl bg-slate-50 px-5 py-3 text-xs text-slate-400'>
         Booked on {new Date(booking.createdAt).toLocaleDateString('en-PK', { year: 'numeric', month: 'long', day: 'numeric' })}

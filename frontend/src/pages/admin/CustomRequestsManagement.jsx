@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 function CustomRequestsManagement() {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [expandedRequestId, setExpandedRequestId] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 8
+  const navigate = useNavigate()
 
   const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -56,6 +61,31 @@ function CustomRequestsManagement() {
     setExpandedRequestId((prevId) => (prevId === id ? null : id))
   }
 
+  const handleCreateBooking = (request) => {
+    navigate('/admin/bookings', { state: { customRequest: request } })
+  }
+
+  const filteredRequests = requests.filter((item) => {
+    const query = searchTerm.trim().toLowerCase()
+    if (!query) return true
+
+    return [
+      item.user?.fullName,
+      item.user?.email,
+      item.preferredAirline?.name,
+      item.hotelType,
+      item.hotelName,
+      item.transportType,
+      item.status,
+      item.specialRequests,
+    ]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query))
+  })
+
+  const totalPages = Math.max(1, Math.ceil(filteredRequests.length / pageSize))
+  const paginatedRequests = filteredRequests.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
   return (
     <div className='space-y-6'>
       <div className='rounded-2xl bg-primary px-6 py-5 text-white'>
@@ -67,7 +97,15 @@ function CustomRequestsManagement() {
 
       <div className='rounded-2xl border border-slate-100 bg-white shadow-soft'>
         <div className='border-b border-slate-100 px-6 py-4'>
-          <h2 className='font-semibold text-slate-800'>All Requests</h2>
+          <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+            <h2 className='font-semibold text-slate-800'>All Requests</h2>
+            <input
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }}
+              placeholder='Search requests'
+              className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary sm:max-w-xs'
+            />
+          </div>
         </div>
 
         {loading ? (
@@ -86,7 +124,7 @@ function CustomRequestsManagement() {
                 </tr>
               </thead>
               <tbody>
-                {requests.map((item) => (
+                {paginatedRequests.map((item) => (
                   <React.Fragment key={item._id}>
                     <tr className='border-t border-slate-100'>
                       <td className='px-4 py-3 align-top'>
@@ -119,6 +157,9 @@ function CustomRequestsManagement() {
                         <div className='flex flex-wrap gap-2'>
                           <button onClick={() => updateStatus(item._id, 'Approved')} className='rounded-lg bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700'>Approve</button>
                           <button onClick={() => updateStatus(item._id, 'Rejected')} className='rounded-lg bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700'>Reject</button>
+                          {item.status === 'Approved' && (
+                            <button onClick={() => handleCreateBooking(item)} className='rounded-lg bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700'>Create Booking</button>
+                          )}
                           <button onClick={() => deleteRequest(item._id)} className='rounded-lg bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700'>Delete</button>
                         </div>
                       </td>
@@ -175,6 +216,11 @@ function CustomRequestsManagement() {
                 ))}
               </tbody>
             </table>
+            <div className='flex items-center justify-between border-t border-slate-100 px-4 py-3 text-sm text-slate-600'>
+              <button type='button' disabled={currentPage === 1} onClick={() => setCurrentPage((page) => Math.max(1, page - 1))} className='rounded-lg border border-slate-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'>Previous</button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button type='button' disabled={currentPage === totalPages} onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))} className='rounded-lg border border-slate-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'>Next</button>
+            </div>
           </div>
         )}
       </div>

@@ -209,6 +209,9 @@ function CustomersManagement() {
                           {item.role !== 'admin' && (
                             <button onClick={() => updateRole(item._id, 'admin')} className='rounded-lg bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700'>Make Admin</button>
                           )}
+                          {item.role !== 'employee' && (
+                            <button onClick={() => updateRole(item._id, 'employee')} className='rounded-lg bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-700'>Make Employee</button>
+                          )}
                           {item.role !== 'customer' && (
                             <button onClick={() => updateRole(item._id, 'customer')} className='rounded-lg bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700'>Make Customer</button>
                           )}

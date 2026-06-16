@@ -21,7 +21,7 @@ function EmployeesManagement() {
 
       const usersResponse = await axios.get('/api/auth/users', getAuthHeaders())
       const usersData = usersResponse.data?.data || []
-      const employeesOnly = usersData.filter((user) => user.role === 'admin')
+      const employeesOnly = usersData.filter((user) => user.role === 'admin' || user.role === 'employee')
 
       setEmployees(employeesOnly)
     } catch (err) {
@@ -67,6 +67,28 @@ function EmployeesManagement() {
   const makeCustomer = async (id) => {
     try {
       await axios.put(`/api/auth/users/${id}/role`, { role: 'customer' }, getAuthHeaders())
+      setSuccess('Employee role updated successfully')
+      fetchEmployees()
+    } catch (err) {
+      console.error(err)
+      setError('Failed to update employee role')
+    }
+  }
+
+  const makeEmployee = async (id) => {
+    try {
+      await axios.put(`/api/auth/users/${id}/role`, { role: 'employee' }, getAuthHeaders())
+      setSuccess('Employee role updated successfully')
+      fetchEmployees()
+    } catch (err) {
+      console.error(err)
+      setError('Failed to update employee role')
+    }
+  }
+
+  const makeAdmin = async (id) => {
+    try {
+      await axios.put(`/api/auth/users/${id}/role`, { role: 'admin' }, getAuthHeaders())
       setSuccess('Employee role updated successfully')
       fetchEmployees()
     } catch (err) {
@@ -138,7 +160,7 @@ function EmployeesManagement() {
                       <td className='px-4 py-3 text-slate-600'>{item.phone || '-'}</td>
                       <td className='px-4 py-3'>
                         <span className='rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700'>
-                          admin
+                          {item.role}
                         </span>
                       </td>
                       <td className='px-4 py-3'>
@@ -149,6 +171,22 @@ function EmployeesManagement() {
                           >
                             Edit
                           </button>
+                          {item.role !== 'employee' && (
+                            <button
+                              onClick={() => makeEmployee(item._id)}
+                              className='rounded-lg bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-700'
+                            >
+                              Make Employee
+                            </button>
+                          )}
+                          {item.role !== 'admin' && (
+                            <button
+                              onClick={() => makeAdmin(item._id)}
+                              className='rounded-lg bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700'
+                            >
+                              Make Admin
+                            </button>
+                          )}
                           {!isSelf && (
                             <button
                               onClick={() => makeCustomer(item._id)}

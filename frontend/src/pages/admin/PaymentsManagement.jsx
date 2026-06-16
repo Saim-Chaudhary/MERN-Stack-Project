@@ -5,6 +5,9 @@ function PaymentsManagement() {
   const [payments, setPayments] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 8
 
   const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -41,6 +44,18 @@ function PaymentsManagement() {
     }
   }
 
+  const filteredPayments = payments.filter((item) => {
+    const query = searchTerm.trim().toLowerCase()
+    if (!query) return true
+
+    return [item.booking?.user?.fullName, item.booking?.package?.title, item.paymentMethod, item.paymentStatus, item.amount, item.paidBy?.fullName]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query))
+  })
+
+  const totalPages = Math.max(1, Math.ceil(filteredPayments.length / pageSize))
+  const paginatedPayments = filteredPayments.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
   return (
     <div className='space-y-6'>
       <div className='rounded-2xl bg-primary px-6 py-5 text-white'>
@@ -52,19 +67,22 @@ function PaymentsManagement() {
 
       <div className='rounded-2xl border border-slate-100 bg-white shadow-soft'>
         <div className='border-b border-slate-100 px-6 py-4'>
-          <h2 className='font-semibold text-slate-800'>All Payments</h2>
+          <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+            <h2 className='font-semibold text-slate-800'>All Payments</h2>
+            <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }} placeholder='Search payments' className='w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary sm:max-w-xs' />
+          </div>
         </div>
 
         {loading ? (
           <div className='p-6 text-sm text-slate-500'>Loading payments...</div>
-        ) : payments.length === 0 ? (
+        ) : paginatedPayments.length === 0 ? (
           <div className='p-6 text-sm text-slate-500'>No payments found.</div>
         ) : (
           <div className='overflow-x-auto'>
             <table className='min-w-full text-sm'>
               <thead className='bg-slate-50 text-left text-slate-600'>
                 <tr>
-                  <th className='px-4 py-3'>Booking</th>
+                  <th className='px-4 py-3'>Customer / Package</th>
                   <th className='px-4 py-3'>Amount</th>
                   <th className='px-4 py-3'>Method</th>
                   <th className='px-4 py-3'>Status</th>
@@ -72,9 +90,16 @@ function PaymentsManagement() {
                 </tr>
               </thead>
               <tbody>
-                {payments.map((item) => (
+                {paginatedPayments.map((item) => (
                   <tr key={item._id} className='border-t border-slate-100'>
-                    <td className='px-4 py-3 text-slate-600'>{item.booking?._id || '-'}</td>
+                    <td className='px-4 py-3 text-slate-600'>
+                      <div className='flex flex-col'>
+                        <span className='font-medium text-slate-800'>
+                          {item.booking?.user?.fullName || item.paidBy?.fullName || '-'}
+                        </span>
+                        <span className='text-xs text-slate-500'>{item.booking?.package?.title || '-'}</span>
+                      </div>
+                    </td>
                     <td className='px-4 py-3 font-medium text-slate-800'>PKR {item.amount || 0}</td>
                     <td className='px-4 py-3 text-slate-600'>{item.paymentMethod || '-'}</td>
                     <td className='px-4 py-3'>
@@ -93,6 +118,11 @@ function PaymentsManagement() {
                 ))}
               </tbody>
             </table>
+            <div className='flex items-center justify-between border-t border-slate-100 px-4 py-3 text-sm text-slate-600'>
+              <button type='button' disabled={currentPage === 1} onClick={() => setCurrentPage((page) => Math.max(1, page - 1))} className='rounded-lg border border-slate-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'>Previous</button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button type='button' disabled={currentPage === totalPages} onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))} className='rounded-lg border border-slate-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'>Next</button>
+            </div>
           </div>
         )}
       </div>

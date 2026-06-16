@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const errorMiddleware = require("./middleware/errorMiddleware");
+const rateLimit = require('express-rate-limit');
 
 // Import all routes
 const authRoutes = require("./routes/authRoutes");
@@ -55,6 +56,16 @@ app.use(cors({
   },
   credentials: true
 }));
+
+// Rate limiter - basic global limiter
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
 
 // Test route
 app.get("/", (req, res) => {
