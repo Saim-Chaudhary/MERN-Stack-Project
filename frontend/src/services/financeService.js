@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const API_URL = '/api/finance'
+const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || ''
+const API_URL = `${API_BASE_URL}/api/finance`
+
 
 const getFinanceStats = async (startDate = null, endDate = null) => {
   let url = `${API_URL}/stats`

@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const API_URL = '/api/company-settings'
+const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || ''
+const API_URL = `${API_BASE_URL}/api/company-settings`
+
 
 const getCompanySettings = async () => {
   const response = await axios.get(API_URL)
