@@ -28,6 +28,7 @@ const assetRoutes = require("./routes/assetRoutes");
 const financeRoutes = require("./routes/financeRoutes");
 
 const app = express();
+app.set('trust proxy', 1);
 
 const defaultAllowedOrigins = [
   "http://localhost:3000",
