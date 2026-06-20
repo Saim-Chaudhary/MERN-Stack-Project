@@ -1,6 +1,7 @@
 const Payment = require('../models/Payment');
 const Booking = require('../models/Booking');
 const stripe = require('../config/stripe');
+const { sendPaymentSuccessEmail } = require('../utils/sendPaymentEmail');
 
 const DEPOSIT_PERCENT = 0.3; // 30% deposit, 70% remaining
 
@@ -295,6 +296,22 @@ const verifyPayment = async (req, res) => {
         });
 
         const syncedBooking = await syncBookingPaymentStatus(booking._id);
+
+        // ───── Send payment success email ─────
+        const fullBooking = await Booking.findById(booking._id)
+            .populate('user', 'fullName email')
+            .populate('package', 'title');
+
+        if (fullBooking?.user?.email) {
+            await sendPaymentSuccessEmail({
+                toEmail: fullBooking.user.email,
+                customerName: fullBooking.user.fullName,
+                packageTitle: fullBooking.package?.title || 'Umrah Package',
+                amount: paidAmount,
+                paymentType,
+                bookingId: fullBooking._id,
+            });
+        }
 
         return res.status(200).json({
             message: "Payment verified and recorded",
