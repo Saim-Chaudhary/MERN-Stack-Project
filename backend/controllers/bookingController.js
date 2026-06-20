@@ -1,17 +1,52 @@
 const Booking = require('../models/Booking');
 const User = require('../models/User');
 const Guide = require('../models/Guide');
+const Package = require('../models/Package');
 
 const createBooking = async (req, res) => {
     try {
-        const { package: packageId, user, travelDate, notes, numberOfAdults, numberOfChildren, numberOfInfants, totalPrice } = req.body;
+        const {
+            package: packageId,
+            user,
+            travelDate,
+            notes,
+            numberOfAdults,
+            numberOfChildren,
+            numberOfInfants,
+            finalPrice
+        } = req.body;
 
-        if (!packageId || !numberOfAdults || !totalPrice) {
+        // ❌ Block frontend price injection
+        if (req.body.totalPrice) {
             return res.status(400).json({
-                message: "Please provide package, numberOfAdults, and totalPrice"
+                message: "Do not send totalPrice. It is calculated by server."
             });
         }
 
+        // ✅ Validate required fields
+        if (!packageId || !numberOfAdults) {
+            return res.status(400).json({
+                message: "Please provide package and numberOfAdults"
+            });
+        }
+
+        // ✅ Get package from DB
+        const pkg = await Package.findById(packageId);
+        if (!pkg) {
+            return res.status(404).json({
+                message: "Package not found"
+            });
+        }
+
+        // 💰 Backend price calculation (SECURE)
+        const unitPrice = pkg.basePrice;
+
+        const calculatedTotalPrice =
+            (Number(numberOfAdults) * unitPrice) +
+            (Number(numberOfChildren || 0) * unitPrice * 0.7) +
+            (Number(numberOfInfants || 0) * unitPrice * 0.2);
+
+        // 💾 Save booking
         const newBooking = await Booking.create({
             user: user || req.user.id,
             package: packageId,
@@ -20,13 +55,16 @@ const createBooking = async (req, res) => {
             numberOfAdults,
             numberOfChildren,
             numberOfInfants,
-            totalPrice
+            totalPrice: calculatedTotalPrice,
+
+            finalPrice: finalPrice || null
         });
 
         return res.status(201).json({
             message: "Booking created successfully",
             data: newBooking
         });
+
     } catch (error) {
         return res.status(500).json({
             message: "Error creating booking",
@@ -114,7 +152,7 @@ const getBookingById = async (req, res) => {
 const updateBookingStatus = async (req, res) => {
     try {
         const bookingId = req.params.id;
-        const { status, paymentStatus, assignedGuide } = req.body;
+        const { status, paymentStatus, assignedGuide, finalPrice } = req.body;
 
         const updateData = {};
 
@@ -128,6 +166,9 @@ const updateBookingStatus = async (req, res) => {
 
         if (assignedGuide !== undefined) {
             updateData.assignedGuide = assignedGuide;
+        }
+        if (finalPrice !== undefined) {
+            updateData.finalPrice = finalPrice;
         }
 
         const updatedBooking = await Booking.findByIdAndUpdate(
@@ -229,6 +270,33 @@ const assignGuideToCustomer = async (req, res) => {
     }
 };
 
+const updateBookingByAdmin = async (req, res) => {
+    try {
+        const bookingId = req.params.id;
+
+        const updated = await Booking.findByIdAndUpdate(
+            bookingId,
+            { $set: req.body },
+            { new: true }
+        ).populate('user package assignedGuide');
+
+        if (!updated) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        return res.status(200).json({
+            message: "Booking updated successfully",
+            data: updated
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error updating booking",
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     createBooking,
     getAllBookings,
@@ -236,5 +304,6 @@ module.exports = {
     getBookingById,
     updateBookingStatus,
     deleteBooking,
-    assignGuideToCustomer
+    assignGuideToCustomer,
+    updateBookingByAdmin
 };

@@ -13,6 +13,11 @@ const bookingSchema = new mongoose.Schema({
 
   totalPrice: Number,
 
+  finalPrice: {
+    type: Number,
+    default: null
+  },
+
   amountPaid: {
     type: Number,
     default: 0

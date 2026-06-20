@@ -12,5 +12,6 @@ router.get('/', authMiddleware, adminMiddleware, bookingController.getAllBooking
 router.put('/assign-guide/customer/:userId', authMiddleware, adminMiddleware, bookingController.assignGuideToCustomer);
 router.put('/:id', authMiddleware, adminMiddleware, bookingController.updateBookingStatus);
 router.delete('/:id', authMiddleware, adminMiddleware, bookingController.deleteBooking);
+router.put('/admin-update/:id', authMiddleware, adminMiddleware, bookingController.updateBookingByAdmin);
 
 module.exports = router;

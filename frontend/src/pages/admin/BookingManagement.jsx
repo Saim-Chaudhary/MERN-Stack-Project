@@ -19,14 +19,17 @@ function BookingManagement() {
     numberOfAdults: 1,
     numberOfChildren: 0,
     numberOfInfants: 0,
-    totalPrice: 0,
+    // totalPrice: 0,
     notes: '',
+    finalPrice: ''
   })
   const [createMessage, setCreateMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const location = useLocation()
   const pageSize = 8
+
+  const [editBooking, setEditBooking] = useState(null)
 
   const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -83,6 +86,22 @@ function BookingManagement() {
       setError('Failed to load bookings')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const saveEditedBooking = async () => {
+    try {
+      await axios.put(
+        `/api/bookings/admin/${editBooking._id}`,
+        editBooking,
+        getAuthHeaders()
+      )
+
+      setEditBooking(null)
+      fetchData()
+    } catch (err) {
+      console.error(err)
+      setError('Failed to update booking')
     }
   }
 
@@ -154,8 +173,10 @@ function BookingManagement() {
         numberOfAdults: Number(createForm.numberOfAdults || 0),
         numberOfChildren: Number(createForm.numberOfChildren || 0),
         numberOfInfants: Number(createForm.numberOfInfants || 0),
-        totalPrice: Number(createForm.totalPrice || 0),
+        // totalPrice: Number(createForm.totalPrice || 0),
         notes: createForm.notes,
+
+        finalPrice: createForm.finalPrice ? Number(createForm.finalPrice) : null
       })
 
       setCreateMessage('Booking created successfully')
@@ -218,10 +239,18 @@ function BookingManagement() {
               ))}
             </select>
             <input type='date' name='travelDate' value={createForm.travelDate} onChange={handleCreateBookingChange} className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
-            <input type='number' min='1' name='numberOfAdults' value={createForm.numberOfAdults} onChange={handleCreateBookingChange} className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
-            <input type='number' min='0' name='numberOfChildren' value={createForm.numberOfChildren} onChange={handleCreateBookingChange} className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
-            <input type='number' min='0' name='numberOfInfants' value={createForm.numberOfInfants} onChange={handleCreateBookingChange} className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
-            <input type='number' min='0' name='totalPrice' value={createForm.totalPrice} onChange={handleCreateBookingChange} className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary md:col-span-2' />
+            <input type='number' min='1' name='numberOfAdults' placeholder='No. of Adults' value={createForm.numberOfAdults} onChange={handleCreateBookingChange} className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
+            <input type='number' min='0' name='numberOfChildren' placeholder='No. of Children' value={createForm.numberOfChildren} onChange={handleCreateBookingChange} className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
+            <input type='number' min='0' name='numberOfInfants' placeholder='No. of Infants' value={createForm.numberOfInfants} onChange={handleCreateBookingChange} className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary' />
+            {/* <input type='number' min='0' name='totalPrice' value={createForm.totalPrice} onChange={handleCreateBookingChange} className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary md:col-span-2' /> */}
+            <input
+              type='number'
+              name='finalPrice'
+              value={createForm.finalPrice}
+              onChange={handleCreateBookingChange}
+              placeholder='Final Price (Negotiated)'
+              className='rounded-lg border px-3 py-2 text-sm md:col-span-3'
+            />
             <input name='notes' value={createForm.notes} onChange={handleCreateBookingChange} placeholder='Notes' className='rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-secondary md:col-span-3' />
             <button type='submit' className='rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white md:col-span-3'>Create Booking</button>
           </form>
@@ -239,6 +268,7 @@ function BookingManagement() {
                   <th className='px-4 py-3'>Customer</th>
                   <th className='px-4 py-3'>Package</th>
                   <th className='px-4 py-3'>Total</th>
+                  <th className='px-4 py-3'>Travelers</th>
                   <th className='px-4 py-3'>Status</th>
                   <th className='px-4 py-3'>Payment Status</th>
                   <th className='px-4 py-3'>Assigned Guide</th>
@@ -250,11 +280,13 @@ function BookingManagement() {
                   <tr key={item._id} className='border-t border-slate-100'>
                     <td className='px-4 py-3 font-medium text-slate-800'>{item.user?.fullName || '-'}</td>
                     <td className='px-4 py-3 text-slate-600'>{item.package?.title || '-'}</td>
-                    <td className='px-4 py-3 text-slate-600'>PKR {item.totalPrice || 0}</td>
+                    <td className='px-4 py-3 text-slate-600'>PKR {item.finalPrice ?? item.totalPrice}</td>
+                    <td className='px-4 py-3 text-slate-600'>
+                      {item.numberOfAdults || 0} Adults, {item.numberOfChildren || 0} Children, {item.numberOfInfants || 0} Infants
+                    </td>
                     <td className='px-4 py-3'>
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        item.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-700' : item.status === 'Cancelled' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
-                      }`}>
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${item.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-700' : item.status === 'Cancelled' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
                         {item.status}
                       </span>
                     </td>
@@ -281,6 +313,7 @@ function BookingManagement() {
                         <button onClick={() => updateBooking(item, { status: 'Confirmed' })} className='rounded-lg bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700'>Confirm</button>
                         <button onClick={() => updateBooking(item, { status: 'Cancelled' })} className='rounded-lg bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700'>Cancel</button>
                         <button onClick={() => updateBooking(item, { assignedGuide: selectedGuideByBooking[item._id] || null })} className='rounded-lg bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700'>Save Guide</button>
+                        {/* <button onClick={() => setEditBooking(item)} className='bg-blue-100 px-3 py-1 text-xs rounded-lg' >Edit</button> */}
                         <button onClick={() => deleteBooking(item._id)} className='rounded-lg bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-700'>Delete</button>
                       </div>
                     </td>
@@ -293,6 +326,7 @@ function BookingManagement() {
               <span>Page {currentPage} of {totalPages}</span>
               <button type='button' disabled={currentPage === totalPages} onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))} className='rounded-lg border border-slate-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'>Next</button>
             </div>
+            
           </div>
         )}
       </div>

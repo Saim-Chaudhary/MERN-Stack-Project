@@ -38,7 +38,23 @@ function PackageDetail() {
 
   const unitPrice = activeSeasonalPrice?.price ?? pkg?.basePrice ?? 0
   const travelersCount = getTravelerCount()
-  const totalPrice = unitPrice * travelersCount
+
+
+  //fixing the pricing rules
+  // const totalPrice = unitPrice * travelersCount
+
+  const calculateTotalPrice = () => {
+    const adults = Number(bookingForm.numberOfAdults)
+    const children = Number(bookingForm.numberOfChildren)
+    const infants = Number(bookingForm.numberOfInfants)
+
+    return (
+      adults * unitPrice +
+      children * unitPrice * 0.7 +
+      infants * unitPrice * 0.2
+    )
+  }
+  const totalPrice = calculateTotalPrice()
 
   const getBookingPayload = () => ({
     package: id,
