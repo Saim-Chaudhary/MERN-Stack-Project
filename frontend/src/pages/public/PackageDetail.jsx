@@ -61,7 +61,8 @@ function PackageDetail() {
     numberOfAdults: Number(bookingForm.numberOfAdults),
     numberOfChildren: Number(bookingForm.numberOfChildren),
     numberOfInfants: Number(bookingForm.numberOfInfants),
-    totalPrice,
+    travelDate: bookingForm.travelDate || undefined,
+    notes: bookingForm.notes || undefined,
   })
 
   useEffect(() => {

@@ -1,23 +1,28 @@
-
 ```
 KAT_Project
 ├─ api
 │  └─ [...all].js
 ├─ backend
-│  ├─ api
-│  │  └─ [...all].js
+│  ├─ AUTH_INFRA.md
 │  ├─ config
-│  │  └─ db.js
+│  │  ├─ cloudinary.js
+│  │  ├─ db.js
+│  │  ├─ multer.js
+│  │  ├─ resend.js
+│  │  └─ stripe.js
 │  ├─ controllers
 │  │  ├─ airlineController.js
+│  │  ├─ assetController.js
 │  │  ├─ authController.js
 │  │  ├─ bookingController.js
+│  │  ├─ companySettingsController.js
 │  │  ├─ contactController.js
 │  │  ├─ customRequestController.js
 │  │  ├─ documentController.js
 │  │  ├─ documentTypeController.js
 │  │  ├─ expenseCategoryController.js
 │  │  ├─ expenseController.js
+│  │  ├─ financeController.js
 │  │  ├─ guideController.js
 │  │  ├─ hotelController.js
 │  │  ├─ packageController.js
@@ -32,7 +37,9 @@ KAT_Project
 │  │  └─ errorMiddleware.js
 │  ├─ models
 │  │  ├─ Airline.js
+│  │  ├─ Asset.js
 │  │  ├─ Booking.js
+│  │  ├─ CompanySettings.js
 │  │  ├─ Contact.js
 │  │  ├─ CustomRequest.js
 │  │  ├─ Document.js
@@ -52,14 +59,17 @@ KAT_Project
 │  ├─ package.json
 │  ├─ routes
 │  │  ├─ airlineRoutes.js
+│  │  ├─ assetRoutes.js
 │  │  ├─ authRoutes.js
 │  │  ├─ bookingRoutes.js
+│  │  ├─ companySettingsRoutes.js
 │  │  ├─ contactRoutes.js
 │  │  ├─ customRequestRoutes.js
 │  │  ├─ documentRoutes.js
 │  │  ├─ documentTypeRoutes.js
 │  │  ├─ expenseCategoryRoutes.js
 │  │  ├─ expenseRoutes.js
+│  │  ├─ financeRoutes.js
 │  │  ├─ guideRoutes.js
 │  │  ├─ hotelRoutes.js
 │  │  ├─ packageRoutes.js
@@ -68,7 +78,11 @@ KAT_Project
 │  │  ├─ seasonalPriceRoutes.js
 │  │  ├─ serviceRoutes.js
 │  │  └─ testimonialRoutes.js
-│  └─ server.js
+│  ├─ seed.js
+│  ├─ server.js
+│  └─ utils
+│     ├─ authSession.js
+│     └─ sendPaymentEmail.js
 ├─ frontend
 │  ├─ eslint.config.js
 │  ├─ index.html
@@ -117,14 +131,18 @@ KAT_Project
 │  │  │  ├─ admin
 │  │  │  │  ├─ AdminDashboard.jsx
 │  │  │  │  ├─ AirlineManagement.jsx
+│  │  │  │  ├─ AssetManagement.jsx
 │  │  │  │  ├─ BookingManagement.jsx
+│  │  │  │  ├─ CompanySettingsManagement.jsx
 │  │  │  │  ├─ ContactsManagement.jsx
 │  │  │  │  ├─ CustomersManagement.jsx
 │  │  │  │  ├─ CustomRequestsManagement.jsx
 │  │  │  │  ├─ DocumentsManagement.jsx
 │  │  │  │  ├─ DocumentTypesManagement.jsx
+│  │  │  │  ├─ EmployeesManagement.jsx
 │  │  │  │  ├─ ExpenseCategoriesManagement.jsx
 │  │  │  │  ├─ ExpensesManagement.jsx
+│  │  │  │  ├─ FinanceDashboard.jsx
 │  │  │  │  ├─ GuideManagement.jsx
 │  │  │  │  ├─ HotelManagement.jsx
 │  │  │  │  ├─ PackagesManagement.jsx
@@ -138,9 +156,11 @@ KAT_Project
 │  │  │  │  ├─ AssignedAgent.jsx
 │  │  │  │  ├─ BookingDetail.jsx
 │  │  │  │  ├─ CustomerDashboard.jsx
+│  │  │  │  ├─ CustomerTestimonials.jsx
 │  │  │  │  ├─ CustomRequests.jsx
 │  │  │  │  ├─ Documents.jsx
 │  │  │  │  ├─ MyBookings.jsx
+│  │  │  │  ├─ PaymentSuccess.jsx
 │  │  │  │  └─ Profile.jsx
 │  │  │  └─ public
 │  │  │     ├─ About.jsx
@@ -152,12 +172,16 @@ KAT_Project
 │  │  │     ├─ Register.jsx
 │  │  │     └─ Services.jsx
 │  │  ├─ services
+│  │  │  ├─ assetService.js
 │  │  │  ├─ authService.js
 │  │  │  ├─ bookingService.js
+│  │  │  ├─ companySettingsService.js
 │  │  │  ├─ contactService.js
 │  │  │  ├─ customRequestService.js
 │  │  │  ├─ documentService.js
+│  │  │  ├─ financeService.js
 │  │  │  ├─ packageService.js
+│  │  │  ├─ paymentService.js
 │  │  │  ├─ seasonalPriceService.js
 │  │  │  └─ testimonialService.js
 │  │  ├─ store
@@ -167,6 +191,7 @@ KAT_Project
 │  └─ vite.config.js
 ├─ package.json
 ├─ README.md
+├─ render.yaml
 └─ vercel.json
 
 ```
